@@ -37,3 +37,31 @@ rm -rf .git/logs/
 git gc      # 收集打包并合并松散对象，然后将不被任何commit引用并已经存在一段时间的对象删除
 git prune   # 它会删除所有过期的、不可达的且未被打包的松散对象
 ```
+
+### git同时提交代码到gitee和github仓库
+
+1.添加多个远程仓库
+
+使用以下命令添加到远程仓库地址
+```
+git remote add gitee [gitee仓库地址]
+git remote add github [github仓库地址]
+```
+
+通过`git remote -v`可以看到远程仓库的地址与名称：
+```
+gitee   git@gitee.com:xxx/xxx.git (fetch)
+gitee   git@gitee.com:xxx/xxx.git (push)
+github  git@github.com:xxx/xxx.git (fetch)
+github  git@github.com:xxx/xxx.git (push)
+```
+
+2.提交代码
+
+然后提交代码即可，默认是添加的所有仓库都会push
+```
+git add .
+git commit -m "fix: debug"
+git push gitee [分支]
+git push github [分支]
+```
