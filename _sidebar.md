@@ -1,5 +1,8 @@
 * PHP
 
+* 前端
+  * [NuxtJs](note/NuxtJs.md)
+
 * 工程化
   * [git](note/git.md)
 

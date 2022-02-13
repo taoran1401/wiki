@@ -1,5 +1,15 @@
-[TOC]
 ## 介绍
+
+Nuxt.js 是一个基于 Vue.js 的通用应用框架。
+
+采用vue开发的应用系统SEO不友好，因此可以使用Nuxt的服务端渲染(SSR)解决SEO问题
+
+Nuxt官网地址：`https://www.nuxtjs.cn/`
+
+Nuxt工作原理简单示意：
+
+![Nuxt工作原理简单示意](../static/images/nuxt_shiyitu.PNG)
+
 
 ## 安装
 
@@ -25,7 +35,6 @@ npm run dev
 ![](../static/images/001.png)
 
 
-
 ## 目录结构
 ```
 .nuxt
@@ -41,6 +50,13 @@ store                 //用于组织应用的 Vuex 状态树 文件
 nuxt.config.js        //文件用于组织 Nuxt.js 应用的个性化配置，以便覆盖默认配置
 package.json          //文件用于描述应用的依赖关系和对外暴露的脚本接口
 ```
+
+## 页面布局
+
+### .nuxt/views/app.template.html
+
+## 插件
+
 
 ## 配置
 
