@@ -48,6 +48,14 @@ git remote add gitee [gitee仓库地址]
 git remote add github [github仓库地址]
 ```
 
+已经存在仓库时可以修改仓库名或者先删除重新再添加
+```
+# 修改仓库名
+git remote rename origin newName
+# 删除远程仓库
+git remote remove origin
+```
+
 通过`git remote -v`可以看到远程仓库的地址与名称：
 ```
 gitee   git@gitee.com:xxx/xxx.git (fetch)
