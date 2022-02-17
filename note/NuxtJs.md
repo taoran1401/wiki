@@ -51,16 +51,9 @@ nuxt.config.js        //文件用于组织 Nuxt.js 应用的个性化配置，�
 package.json          //文件用于描述应用的依赖关系和对外暴露的脚本接口
 ```
 
-## 页面布局
-
-### .nuxt/views/app.template.html
-
-## 插件
-
-
 ## 配置
 
-### 1.配置ip和端口, 可解决端口冲突问题
+### 配置ip和端口, 可解决端口冲突问题
 
 
 在`/package.json`中添加以下内容
@@ -74,7 +67,7 @@ package.json          //文件用于描述应用的依赖关系和对外暴露�
 }
 ```
 
-### 2.配置全局css
+### 配置全局css
 
 在`/nuxt.config.js`中添加要使用的css资源
 ```
@@ -86,7 +79,7 @@ css: [
 ],
 ```
 
-### 3.环境变量配置
+### 环境变量配置
 在`/nuxt.config.js`中添加环境变量，
 ```
 env: {
@@ -98,7 +91,7 @@ env: {
 
 可以通过`process.env.baseUrl`获取，还可以通过`context`获取，可参考：`https://www.nuxtjs.cn/api/configuration-env`
 
-### 4.head配置
+### head配置
 
 在`/nuxt.config.js`中修改head配置meta信息
 ```
@@ -320,7 +313,7 @@ export default {
 }
 ```
 
-## 请求数据（asyncData， axios）
+## 请求数据
 
 Nuxt.js 扩展了 Vue.js，增加了一个叫 asyncData 的方法，使得我们可以在设置组件的数据之前能异步获取或处理数据。
 
@@ -392,12 +385,6 @@ Nuxt依据pages目录结构自动生成vue-router模块的路由配置
 
 ### 嵌套路由
 
-## 异步数据
+## 中间件
 
-## 插件
-
-## Vuex状态树
-
-## 请求
-
-## 打包/部署
+## 打包和部署
