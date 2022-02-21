@@ -73,3 +73,15 @@ git commit -m "fix: debug"
 git push gitee [分支]
 git push github [分支]
 ```
+
+### gitlab仓库迁移
+
+gitlab仓库迁移，包含提交信息，分支和标签等
+
+```
+git fetch --all
+git fetch --tags
+git remote set-url origin <项目的新仓库地址>
+git push origin --all 
+git push --tags 
+```
