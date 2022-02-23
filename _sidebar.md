@@ -1,7 +1,22 @@
-* PHP
+* 后端
+  * [PHP](note/PHP.md)
+  * [Go](note/Golang.md)
 
 * 前端
+  * [flex布局](note/FlexLayout.md)
+  * [vuex](note/Vuex.md)
   * [NuxtJs](note/NuxtJs.md)
+  * [VueElementAdmin](note/VueElementAdmin.md)
+
+* 数据库
+  * [Mysql](note/Mysql.md)
+  * [Mycat](note/Mycat.md)
+  * [Redis](note/Redis.md)
+  * [Neo4J](note/Neo4j.md)
+
+* 程序员内功
+  * [数据结构和算法](DataStructureAndAlgorithms.md)
+  * [网络协议](NetworkingProtocol.md)
 
 * 工程化
   * [git](note/git.md)
