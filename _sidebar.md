@@ -1,6 +1,8 @@
 * 后端
   * [PHP](note/PHP.md)
-
+  * [go](note/Golang.md)
+  * [java](note/java.md)
+  
 * 前端
   * [flex布局](note/FlexLayout.md)
   * [vuex](note/Vuex.md)
@@ -9,9 +11,8 @@
 
 * 数据库
   * [Mysql](note/Mysql.md)
-  * [Mycat](note/Mycat.md)
+  * [Mycat](note/MyCat.md)
   * [Redis](note/Redis.md)
-  * [Neo4J](note/Neo4j.md)
 
 * 程序员内功
   * [数据结构和算法](DataStructureAndAlgorithms.md)
