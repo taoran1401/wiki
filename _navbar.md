@@ -5,5 +5,3 @@
   * colorful-blog
   * 网址导航
 
-* 变换主题
-    
