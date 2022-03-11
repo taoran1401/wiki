@@ -1,6 +1,5 @@
 * 后端
   * [PHP](note/PHP.md)
-  * [Go](note/Golang.md)
 
 * 前端
   * [flex布局](note/FlexLayout.md)
