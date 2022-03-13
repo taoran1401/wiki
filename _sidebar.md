@@ -4,7 +4,7 @@
   * [java](note/java.md)
   
 * 前端
-  * [flex布局](note/FlexLayout.md)
+  * [flex布局](note/HtmlCss.md)
   * [vuex](note/Vuex.md)
   * [NuxtJs](note/NuxtJs.md)
   * [VueElementAdmin](note/VueElementAdmin.md)
