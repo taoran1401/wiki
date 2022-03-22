@@ -52,7 +52,7 @@ php代码包含在`<?php ?>`中：
 <?php 
     echo "hello world";               //输出字符串
     var_dump(["hello", "world"]);     //输出变量，可以显示变量的结构化信息
-    print_f("你好: %s", "world");     //输出普通的字符串，也格式化输出
+    printf("你好: %s", "world");     //输出普通的字符串，也格式化输出
     print_r(["hello", "world"]);      //用人类容易读取的格式来显示这个变量的信息
     die("error: 403");                //关闭程序并输出内容
 ```
@@ -72,9 +72,19 @@ php代码包含在`<?php ?>`中：
 ## 常量和变量
 
 
+```php
+const STATUS_SUCCESS = 1;
+```
+
+```php
+$name = "zhangsan";
+echo $name;     // zhangsan
+
+$name = "lisi"; 
+echo $name;     // lisi
+```
+
 ## 数据类型
-
-
 
 ## 运算符
 
@@ -98,6 +108,14 @@ php代码包含在`<?php ?>`中：
 
 ### 包含
 
+include
+
+require
+
+include_once
+
+require_once
+
 ## 面向对象
 
 ## MySql操作
@@ -116,8 +134,6 @@ php代码包含在`<?php ?>`中：
 
 ### session
 
-## Jwt
-
 ## 迭代器和生成器
 
 ## 常见安全问题
@@ -125,7 +141,7 @@ php代码包含在`<?php ?>`中：
 ### xss攻击
 
 ### sql注入
-d
+
 ## 框架
 
 ## web应用框架
@@ -137,7 +153,3 @@ d
 
 [swoole](https://wiki.swoole.com/#/)
 [hyperf](https://hyperf.wiki/2.2/#/)
-
-```
-设计模式
-```
