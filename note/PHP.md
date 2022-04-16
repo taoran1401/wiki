@@ -776,10 +776,20 @@ var_dump($getName());   //zhangsan
 
 > 见php文档: `https://www.php.net/download-docs.php`
 
-## 面向对象
-
-> 待写...
-
 ## MySql操作
 
-> 待写...
+### 连接数据库
+
+### 执行sql
+
+## 面向对象
+
+### 作用 
+
+### 特性
+
+#### 封装
+
+#### 继承
+
+#### 多态
