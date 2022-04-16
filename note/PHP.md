@@ -1,4 +1,4 @@
-# PHP
+# PHP基础入门
 
 ## 安装
 
@@ -728,91 +728,58 @@ function foo(...$args)
     }
 }
 ```
+##### 返回值
 
-##### 值传递，引用传递
+函数执行后和通过`return`将结果返回到外部接收
 
-关于返回值：
-
-
-格式：
-```
-function 函数名(参数1, 参数2, /* ..., */ 参数n, 有默认值参数 = ‘默认值’)
+例子：
+```php
+function foo()
 {
-    // 代码块
-    echo 'hello foo';
-    // 返回值
-    return $result;
+    $name = 'foo';
+    return $name;
 }
 ```
 
+##### 值传递，引用传递
 
+- 值传递：
+- 引用传递：
 
+函数是局部作用域，在函数内修改传入的变量，在外部并不会发生变化,这里可以使用引用传递来解决
 
-    函数参数
-    作用域
-    返回值
+例子:
+```php
+$name = 'zhangsan';
+function resetName(&$name)
+{
+    $name = 'lisi';
+}
 
-使用函数
+var_dump($name);    //结果：lisi
+```
 
+##### 匿名函数
 
-## 常用系统函数
+// TODO: 闭包
 
-### 字符串
+例子：
+```php
+$getName = function () {
+    return 'zhangsan';
+}
 
-### 数组
+var_dump($getName());   //zhangsan
+```
 
-### 日期
+### 常用内置函数
 
-### 文件
-
-### json
-
-### 包含
-
-include
-
-require
-
-include_once
-
-require_once
+> 见php文档: `https://www.php.net/download-docs.php`
 
 ## 面向对象
 
+> 待写...
+
 ## MySql操作
 
-## Redis操作
-
-## 异常处理
-
-## 图片处理
-
-## curl
-
-## cookie和session
-
-### cookie
-
-### session
-
-## 迭代器和生成器
-
-## 常见安全问题
-
-### xss攻击
-
-### sql注入
-
-## 框架
-
-## web应用框架
-
-[Laravel](https://learnku.com/docs/laravel/9.x)
-
-[ThinkPHP](https://www.thinkphp.cn/)
-
-### 协程框架
-
-[swoole](https://wiki.swoole.com/#/)
-
-[hyperf](https://hyperf.wiki/2.2/#/)
+> 待写...
