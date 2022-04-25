@@ -778,7 +778,9 @@ var_dump($getName());   //zhangsan
 
 ## MySql操作
 
-### 连接数据库
+### mysqld
+
+### PDO
 
 ### 执行sql
 
@@ -793,3 +795,45 @@ var_dump($getName());   //zhangsan
 #### 继承
 
 #### 多态
+
+## 预定义接口
+
+### ArrayAccess
+
+> 提供像访问数组一样访问对象的能力的接口
+
+一个例子就能明白：
+```php
+class Obj implements ArrayAccess
+{
+    public function offsetExists($offset)
+    {
+        var_dump('offsetExists');
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        var_dump('offsetSet');
+    }
+
+    public function offsetGet($offset)
+    {
+        var_dump('offsetGet');
+    }
+
+    public function offsetUnset($offset)
+    {
+        var_dump('offsetUnset');
+    }
+}
+
+$obj = new Obj;
+$obj['name'] = 1;                   //调用了：offsetSet
+$obj['name'];                       //调用了：offsetGet
+isset($obj['name']);                //调用了：offsetExists
+unset($obj['name']);                //调用了：offsetUnset
+```
+
+
+
+
