@@ -152,3 +152,160 @@ $obj['name'];                       //当获取元素时调用了：offsetGet
 isset($obj['name']);                //当isset元素时调用了：offsetExists
 unset($obj['name']);                //当unset元素时调用了：offsetUnset
 ```
+
+## 迭代器和生成器
+
+### 迭代器
+
+> 迭代器是一种设计模式，提供一种方法顺序访问一个聚合对象中各个元素，而又不暴露该对象的内部显示
+
+`Iterator`接口代码
+```php
+interface Iterator extends Traversable {
+
+    public function current();
+
+    public function next();
+
+    public function key();
+
+    public function valid();
+
+    public function rewind();
+}
+```
+
+> 当实现了`Iterator`的对象被遍历时，会自动调用这些方法； 调用的循序是：`rewind() -> valid() -> current() -> key() -> next()`
+
+示例：
+```php
+class MyIterator implements Iterator
+{
+    private $position = 0;
+
+    private $array = array(
+        "firstelement",
+        "secondelement",
+        "lastelement",
+    );
+
+    public function __construct() {
+        $this->position = 0;
+    }
+
+    public function rewind() {
+        var_dump(__METHOD__);
+        $this->position = 0;
+    }
+
+    public function current() {
+        var_dump(__METHOD__);
+        return $this->array[$this->position];
+    }
+
+    public function key() {
+        var_dump(__METHOD__);
+        return $this->position;
+    }
+
+    public function next() {
+        var_dump(__METHOD__);
+        ++$this->position;
+    }
+
+    public function valid() {
+        var_dump(__METHOD__);
+        return isset($this->array[$this->position]);
+    }
+}
+
+$myIterator = new MyIterator();
+foreach ($myIterator as $key => $value) {
+    var_dump($key, $value);
+}
+```
+
+结果：
+```
+string(18) "MyIterator::rewind"
+string(17) "MyIterator::valid"
+string(19) "MyIterator::current"
+string(15) "MyIterator::key"
+int(0)
+string(12) "firstelement"
+string(16) "MyIterator::next"
+string(17) "MyIterator::valid"
+string(19) "MyIterator::current"
+string(15) "MyIterator::key"
+int(1)
+string(13) "secondelement"
+string(16) "MyIterator::next"
+string(17) "MyIterator::valid"
+string(19) "MyIterator::current"
+string(15) "MyIterator::key"
+int(2)
+string(11) "lastelement"
+string(16) "MyIterator::next"
+string(17) "MyIterator::valid"
+```
+
+优点：
+ - 支持多种遍历方式。比如有序列表，我们根据需要提供正序遍历、倒序遍历两种迭代器。
+ - 简化了聚合类。由于引入了迭代器，原有的集合对象不需要自行遍历集合元素了
+ - 增加新的聚合类和迭代器类很方便，两个维度上可各自独立变化
+ - 为不同的集合结构提供一个统一的接口，从而支持同样的算法在不同的集合结构上操作。
+
+缺点:
+ - 迭代器模式将存储数据和遍历数据的职责分离增加新的集合对象时需要增加对应的迭代器类，类的个数成对增加，在一定程度上增加系统复杂度。
+
+实际场景： 
+ - 参考php的SPL迭代器
+ - 以及参考需要处理大量数据时PDO和mysqli的内存变化
+
+### 生成器
+
+> 生成器是在 PHP 5.5 版本中添加的，它提供了一种简单的方法来遍历数据，而不需要在内存中构建数组
+> 解决运行内存的瓶颈，当读取很大的文件(比如10G)无法一次加载或者不想让这些数据全部加载到内存中
+> 注意： 生成器只能在函数中使用
+
+1：举个例子, 不使用yield, 内存使用45m(这个结果根据csv内容而定)：
+```php
+$startMemory = memory_get_usage();
+
+function readCsv()
+{
+    $file = fopen('./demo.csv', 'r');
+    $data = [];
+    while (feof($file) === false) {
+        $data[] =  fgetcsv($file);
+    }
+    fclose($file);
+    return $data;
+}
+$data = readCsv();
+$endMemory = memory_get_usage();
+$useMemory = round(($endMemory - $startMemory) / 1024 / 1024, 3) . 'M' . PHP_EOL;
+var_dump($useMemory);
+```
+
+2：使用yield, 内存使用0.xM：
+```php
+$startMemory = memory_get_usage();
+
+function readCsv()
+{
+    $file = fopen('./demo.csv', 'r');
+    while (feof($file) === false) {
+        yield fgetcsv($file);
+    }
+    fclose($file);
+}
+// yield是一个一个消耗
+foreach (readCsv() as $key => $value) {
+    var_dump($value);
+}
+$endMemory = memory_get_usage();
+$useMemory = round(($endMemory - $startMemory) / 1024 / 1024, 3) . 'M' . PHP_EOL;
+var_dump($useMemory);
+```
+
