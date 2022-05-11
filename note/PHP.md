@@ -309,4 +309,13 @@ $useMemory = round(($endMemory - $startMemory) / 1024 / 1024, 3) . 'M' . PHP_EOL
 var_dump($useMemory);
 ```
 
-## 制作composer包
+## zval
+
+### 什么是zval
+
+> Zval是zend中另一个非常重要的数据结构，用来标识并实现PHP变量。包含了PHP中的变量值和类型的相关信息
+
+### 
+
+> https://blog.csdn.net/weixin_43885417/article/details/100990106
+> https://www.php.cn/php-ask-453781.html
