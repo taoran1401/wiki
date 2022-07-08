@@ -231,3 +231,13 @@ db.users.find(
 	{"user_id": 1, "username": 1, "_id": 0}
 ).sort({"user_id": 1}).explain();
 ```
+
+
+```sql
+
+-- 连表时添加过滤条件
+-- 比如A表和B表连表，B表的status = 0时B表数据才会被查询，否则为空 
+
+-- 示例sql
+select a.id,b.id from A as a left join B as b on a.id = b.id and b.status = 0;
+```
