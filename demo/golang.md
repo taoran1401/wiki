@@ -47,6 +47,11 @@ func Post(value1, value2, value3 int)  {
     checkErr(err)
     fmt.Println(c)
 }
+
+//打印结构体
+func printStruct() {
+    
+}
 ```
 
 
@@ -57,7 +62,6 @@ func Post(value1, value2, value3 int)  {
 //go:generate go env -w GOPROXY=https://goproxy.cn,direct
 //go:generate go mod tidy
 //go:generate go mod download
-
 
 
 go mod tidy
@@ -73,8 +77,14 @@ go mod vendor
 ```
 
 ```
+go管理包命令(mod)
 viper使用
-
 fsnotify: 文件监控
-
+casbin
+mysql/gorm
+zap
+rabbitmq
+mongodb
+redis
+atom
 ```

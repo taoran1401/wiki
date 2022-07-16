@@ -241,3 +241,12 @@ db.users.find(
 -- 示例sql
 select a.id,b.id from A as a left join B as b on a.id = b.id and b.status = 0;
 ```
+
+
+```
+golang
+redis(快速复习)
+rabbitmq
+mongodb
+大数据
+```
