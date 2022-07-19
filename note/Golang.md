@@ -340,8 +340,218 @@ delete(goods, "color")
 fmt.Printf("%v \n", goods)  //结果：map[price:500 title:蓝牙耳机]
 ```
 
-#### 排序
+## 结构体
 
+> Go 语言通过用自定义的方式形成新的类型，结构体是类型中带有成员的复合类型。Go 语言使用结构体和结构体成员来描述真实世界的实体和实体对应的各种属性
+> 结构体属于值传递
+
+> 结构体成员是由一系列的成员变量构成，这些成员变量也被称为“字段”。字段有以下特性：
+- 字段拥有自己的类型和值。
+- 字段名必须唯一。
+- 字段的类型也可以是结构体，甚至是字段所在结构体的类型。
+
+> 关于go的面向对象
+- Go支持面向对象(OOP)，并不是纯粹的面向对象语言；
+- Go没有类的概念，结构体(struct)相当于其它编程语言的类(class)；
+- Go面向对象编程非常简洁，通过接口(interface)关联，耦合性低，也非常灵活；
+
+
+### 定义结构体
+
+使用type struct来定义
+```go
+//定义一个结构体
+type Goods struct {
+	Name  string
+	Price int
+	Spec  string
+}
+```
+
+### 实例化结构体
+
+> 注意以下方式实例出来的类型
+
+#### 基本方式
+
+```go
+var goods Goods
+goods.Name = "蓝牙耳机"
+goods.Price = 500
+goods.Spec = "红色"
+
+fmt.Printf("值：%v； 类型：%T;\n", goods, goods) //值：{蓝牙耳机 500 红色}； 类型：main.Goods;
+```
+
+或：
+```go
+var goods = Goods{
+    Name:  "蓝牙耳机",
+    Price: 500,
+    Spec:  "红色",
+}
+fmt.Printf("值：%v； 类型：%T;\n", goods, goods) //值：{蓝牙耳机 500 红色}； 类型：main.Goods;
+```
+
+#### 创建指针类型结构体
+
+```go
+var goods = new(Goods)
+goods.Name = "蓝牙耳机"
+goods.Price = 500
+goods.Spec = "红色"
+fmt.Printf("值：%v； 类型：%T;\n", goods, goods) //值：&{蓝牙耳机 500 红色}； 类型：*main.Goods;
+```
+
+#### 取地址实例化
+
+```go
+var goods = &Goods{}
+goods.Name = "蓝牙耳机"
+goods.Price = 500
+goods.Spec = "红色"
+fmt.Printf("值：%v； 类型：%T;\n", goods, goods) //值：&{蓝牙耳机 500 红色}； 类型：*main.Goods;
+```
+
+或：
+```go
+var goods = &Goods{
+    Name:  "蓝牙耳机",
+    Price: 500,
+    Spec:  "红色",
+}
+fmt.Printf("值：%v； 类型：%T;\n", goods, goods) //值：&{蓝牙耳机 500 红色}； 类型：*main.Goods;
+```
+
+### 结构体方法
+
+> 结构体方法通过在函数名前面声明，如下：
+
+```go
+package main
+
+import "fmt"
+
+//定义一个结构体
+type Goods struct {
+	Name  string
+	Price int
+	Spec  string
+}
+
+//获取goods信息
+//结构体方法
+func (g Goods) GetGoodsInfo() {
+	fmt.Printf("值：%v； 类型：%T;\n", g, g)
+}
+
+//修改goods信息
+//结构体方法,这里声明指针类型,否则修改不会成功
+func (g *Goods) SetGoodsInfo(name string, price int) {
+	g.Name = name
+	g.Price = price
+}
+
+func main() {
+	var goods = Goods{
+		Name:  "蓝牙耳机",
+		Price: 500,
+		Spec:  "白色",
+	}
+	//调用结构体方法
+	goods.GetGoodsInfo() //值：{蓝牙耳机 500 白色}； 类型：main.Goods;
+	//调用修改
+	goods.SetGoodsInfo("有线耳机", 200)
+	//查看修改结果
+	goods.GetGoodsInfo() //值：{有线耳机 200 白色}； 类型：main.Goods;
+}
+```
+
+> 注意：结构体方法首字母大写表示公有，小写表示私有
+
+### 结构体嵌套（继承）
+
+> 结构体的字段类型可以是：基本数据类型、切片、Map以及结构体
+
+#### 嵌套
+
+```go
+//定义一个结构体
+type Goods struct {
+	Name string
+	Num  int
+	Sku  Sku //表示Goods结构体嵌套Sku结构体
+}
+
+type Sku struct {
+	Spec  string
+	Price int
+}
+```
+
+给Goods结构体中的Sku结构体设置值
+```go
+var goods Goods
+goods.Name = "蓝牙耳机"
+goods.Num = 100
+//给Sku结构体设置值
+goods.Sku.Spec = "红色降噪"
+goods.Sku.Price = 500
+fmt.Printf("值：%v； 类型：%T;\n", goods, goods) //值：{蓝牙耳机 100 {红色降噪 500}}； 类型：main.Goods;
+```
+
+#### 继承
+
+> 通过嵌套的方式实现继承， 如下
+
+```go
+package main
+
+import "fmt"
+
+//大类别商品：存放公共属性
+type Goods struct {
+	Name  string
+	Price int
+}
+
+//商品下的手机类别: 存放特有属性，颜色重量等，将Goods结构体嵌套进来实现继承，相当于Phone也拥有了商品的属性
+type Phone struct {
+	Color  string
+	Weight string
+	Goods  //继承Goods
+}
+
+//获取goods信息
+//Goods的结构体方法
+func (g Goods) GetGoodsInfo() {
+	fmt.Printf("值：%v； 类型：%T;\n", g, g)
+}
+
+//获取phon信息
+//Phone的结构体方法
+func (p Phone) GetPhoneInfo() {
+	fmt.Printf("值：%v； 类型：%T;\n", p, p)
+}
+
+func main() {
+	//初始化Phone
+	phone := Phone{
+		Color:  "red",
+		Weight: "1kg",
+		Goods: Goods{
+			Name:  "iphone 18",
+			Price: 10000,
+		},
+	}
+	//调用继承的Goods结构方法
+	phone.GetGoodsInfo() //值：{iphone 18 10000}； 类型：main.Goods;
+	//调用自己的方法
+	phone.GetPhoneInfo() //值：{red 1kg {iphone 18 10000}}； 类型：main.Phone;
+}
+```
+
+可以看到实现了继承，实例出来的`phone`可以调用父类的方法
 
 
 ## Zap

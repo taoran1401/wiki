@@ -1,7 +1,6 @@
 * 后端
   * [PHP](note/PHP.md)
   * [Golang](note/Golang.md)
-  * [Lua](note/Lua.md)
   
 * 前端
   * [html/css](note/HtmlCss.md)
