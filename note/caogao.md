@@ -234,7 +234,6 @@ db.users.find(
 
 
 ```sql
-
 -- 连表时添加过滤条件
 -- 比如A表和B表连表，B表的status = 0时B表数据才会被查询，否则为空 
 
@@ -243,10 +242,39 @@ select a.id,b.id from A as a left join B as b on a.id = b.id and b.status = 0;
 ```
 
 
-```
-golang
-redis(快速复习)
-rabbitmq
-mongodb
-大数据
+
+
+golang使用panic,recover实现错误捕获
+```go
+func main() {
+	fmt.Println("start")
+	try(tierCode)
+	fmt.Println("end")
+}
+
+func tierCode() {
+	//var slice []int
+	tierTwo()
+	//fmt.Println(slice[0])
+}
+
+func tierTwo() {
+	panic("参数错误:two")
+}
+
+func try(entry func()) {
+	defer func() {
+		fmt.Println("try err")
+		err := recover()
+		switch err.(type) {
+		case runtime.Error:
+			fmt.Println("runtime error", err)
+			break
+		default:
+			fmt.Println("error", err)
+			break
+		}
+	}()
+	entry()
+}
 ```
