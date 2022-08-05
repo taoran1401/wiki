@@ -252,6 +252,10 @@ func main() {
 	fmt.Println("end")
 }
 
+// base: 1
+// ioc: 1
+// taogin: gin,viper,zap,gorm,redis,mongodb,rabbitmq,cron,command,plugin,[curl]
+// data-view
 func tierCode() {
 	//var slice []int
 	tierTwo()
@@ -278,3 +282,14 @@ func try(entry func()) {
 	entry()
 }
 ```
+
+## sync
+
+
+## flag包
+
+## reflect反射
+
+## websocket
+
+## git submodule

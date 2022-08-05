@@ -612,14 +612,88 @@ logger.Info("info---", zap.String("client", "app"), zap.String("loggerId", "1"))
 //结果：{"level":"info","ts":1657856193.171507,"caller":"core/zap.go:16","msg":"info---","client":"app","loggerId":"1"}
 ```
 
-> Zap Sync
+#### 日志打印到文件
 
-TODO ~
+要将日志写入到文件需要使用`zap.New()`来构造一个`logger`
 
-### Sugared Logge
+> func New(core zapcore.Core, options ...Option) *Logger
+- 参数： zapcore.Core用来构建配置（详细参数如下）
+- 参数：...Option设置其他配置，比如 zap.AddCaller(): 输出文件名和行号
 
-TODO ~
+> func NewCore(enc Encoder, ws WriteSyncer, enab LevelEnabler) Core
+- 参数 Encoder： 编码器，可自定义时间格式，是否显示行号，以及字段名字等等
+- 参数 WriteSyncer：指定日志将写到哪里去。我们使用zapcore.AddSync()函数并且将打开的文件句柄传进去
+- 参数 LevelEnabler： 日志等级
+
+> 示例：
+```go
+func Zap(logFile string) *zap.SugaredLogger {
+	//创建core,设置基本参数
+	coreInfo := CoreInfo(logFile)   //会打印除debug的其他日志
+	coreDebug := CoreDebug(logFile) //全量日志
+	coreWarn := CoreWarn(logFile)   //会打印err和warn
+	coreError := CoreError(logFile) //错误日志
+	//合并core
+	core := zapcore.NewTee(coreInfo, coreDebug, coreWarn, coreError)
+	//zap.AddCaller(): 输出文件名和行号
+	logger := zap.New(core, zap.AddCaller(), zap.WithCaller(true)).Sugar()
+	return logger
+}
+
+func CoreDebug(logFile string) zapcore.Core {
+	writerSyncer := zapcore.AddSync(logFile)
+	return zapcore.NewCore(zapcore.NewJSONEncoder(CustomEncodeConfig()), writerSyncer, zapcore.DebugLevel)
+}
+
+func CoreError(logFile string) zapcore.Core {
+	writerSyncer := zapcore.AddSync(logFile)
+	return zapcore.NewCore(zapcore.NewJSONEncoder(CustomEncodeConfig()), writerSyncer, zapcore.ErrorLevel)
+}
+
+//自定义日志输出格式
+func CustomEncodeConfig() zapcore.EncoderConfig {
+	return zapcore.EncoderConfig{
+		TimeKey:        "ts",
+		LevelKey:       "level",
+		NameKey:        "logger",
+		CallerKey:      "caller",
+		FunctionKey:    zapcore.OmitKey,
+		MessageKey:     "msg",
+		StacktraceKey:  "stacktrace",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeLevel:    zapcore.LowercaseLevelEncoder,
+		EncodeTime:     zapcore.ISO8601TimeEncoder,
+		EncodeDuration: zapcore.SecondsDurationEncoder,
+		//EncodeCaller:   zapcore.FullCallerEncoder,
+		EncodeCaller: zapcore.ShortCallerEncoder,
+	}
+}
+```
+
+执行打印：
+```go
+Zap().Error("错误信息")
+```
+
+`error.log`文件：
+```
+{"level":"error","ts":"2022-08-04T18:26:35.358+0800","caller":"command/test.go:26","msg":"错误信息"}
+```
 
 
-## viper
+
+## Sync包
+
+### 简介
+
+> 提供了基础的异步操作方法，包括互斥锁Mutex，执行一次Once和并发等待组WaitGroup
+
+### Mutex: 互斥锁
+### RWMutex：读写锁
+### WaitGroup：并发等待组
+### Once：执行一次
+### Cond：信号量
+### Pool：临时对象池
+### Map：自带锁的map
+
 
