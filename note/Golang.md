@@ -553,6 +553,374 @@ func main() {
 
 可以看到实现了继承，实例出来的`phone`可以调用父类的方法
 
+## 接口
+
+### 简介
+
+> 在golang中接口(interface)是一种类型，一种抽象的类型。接口(interface)是一组函数method的集合，golang中的接口不能包含任何变量。
+
+> golang中的接口也是一种数据类型，不需要显示实现。只需要一个变量含有接口类型中的所有方法，那么这个变量就实现了这个接口
+
+### 定义和实现
+
+定义格式如下：
+```go
+type 接口类型名 interface{
+    方法名1( 参数列表1 ) 返回值列表1
+    方法名2( 参数列表2 ) 返回值列表2
+    …
+}
+```
+
+示例：
+```go
+//定义商品接口
+type GoodsInterface interface {
+	GetPrice() int
+	ShelfGoods(status int) bool
+}
+```
+
+接口被实现的条件：
+- 接口的方法与实现接口的类型方法格式一致
+- 接口中所有方法均被实现
+
+```go
+package main
+
+import "fmt"
+
+//定义商品接口
+type GoodsInterface interface {
+	GetPrice() int
+	ShelfGoods(status int) bool
+}
+
+//定义优惠券结构体
+type Coupon struct {
+	Price  int
+	status int
+}
+
+//实现商品接口中的GetPrice方法
+func (this *Coupon) GetPrice() int {
+	return this.Price
+}
+
+//实现商品接口中的ShelfGoods方法
+func (this *Coupon) ShelfGoods(status int) bool {
+	this.status = status
+	return true
+}
+
+func main() {
+	coupon := &Coupon{
+		Price:  100,
+		status: 0,
+	}
+	//创建GoodsInterface类型的变量
+	var goods GoodsInterface
+	//表示优惠券实现了商品接口
+	goods = coupon
+	//调用GetPrice
+	fmt.Println(goods.GetPrice())	//结果：100
+}
+```
+
+### 空接口
+
+> 空接口是接口类型的特殊形式，空接口没有任何方法，因此任何类型都无须实现空接口。从实现的角度看，任何值都满足这个接口的需求。因此空接口类型可以保存任何值，也可以从空接口中取出原值。
+
+> 空接口赋值：空接口类型可以保存任何值
+
+```go
+//定义空接口
+type A interface{}
+
+func main() {
+	var a A
+	var str = "hello go"
+	a = str
+	fmt.Printf("类型：%T 值：%v\n", a, a) //类型：string 值：hello go
+
+	var num = 10
+	a = num
+	fmt.Printf("类型：%T 值：%v\n", a, a) //类型：int 值：10
+}
+```
+
+> 空接口作为函数参数： 表示这个函数可以接收任意参数
+
+```go
+//接收任意参数类型
+func GetInfo(a interface{}) {
+	fmt.Printf("类型：%T 值：%v\n", a, a)
+}
+
+func main() {
+	GetInfo("hello go") //传入string类型参数
+	GetInfo(10)         //传入int类型参数
+	GetInfo(true)       //传入bool类型参数
+	slice := []int{1, 2, 3}
+	GetInfo(slice) //传入切片类型参数
+}
+```
+
+结果：
+```
+类型：string 值：hello go
+类型：int 值：10
+类型：bool 值：true
+类型：[]int 值：[1 2 3]
+```
+
+> map值为空接口（切片同理）
+
+```go
+func main() {
+	var mapList = make(map[string]interface{})
+	mapList["name"] = "蓝牙耳机"
+	mapList["price"] = 1000
+	mapList["status"] = false
+	fmt.Printf("类型：%T 值：%v\n", mapList, mapList) 
+	//结果： 类型：map[string]interface {} 值：map[name:蓝牙耳机 price:1000 status:false]
+}
+```
+
+### 类型断言
+
+> 类型断言（Type Assertion）是一个使用在接口值上的操作，用于检查接口类型变量所持有的值是否实现了期望的接口或者具体的类型。
+
+语法：
+```go
+x.(T)
+```
+- x: 表示interface{}的变量
+- T: 表示断言x可能的类型
+
+示例：当获取空接口不知道什么类型的时候可以使用
+```go
+func main() {
+	//定义一个空间赋值
+	var a interface{}
+	a = "hello go"
+	//断言是否string类型，如果是ok返回true,v表示类型
+	v, ok := a.(string)
+	fmt.Printf("类型：%T 断言结果：%v\n", v, ok)	//类型：string 断言结果：true
+
+}
+```
+
+> 结合`switch`使用
+
+```go
+func GetType(x interface{}) {
+	switch x.(type) {
+	case int:
+		fmt.Println("断言结果：int")
+	case string:
+		fmt.Println("断言结果：string")
+	case bool:
+		fmt.Println("断言结果：bool")
+	default:
+		fmt.Println("断言结果：无")
+	}
+}
+
+func main() {
+	//定义一个空间赋值
+	var x interface{}
+	GetType(x)
+	x = "hello go"
+	GetType(x)
+	x = 10
+	GetType(x)
+	x = false
+	GetType(x)
+}
+```
+
+结果：
+```
+断言结果：无
+断言结果：string
+断言结果：int
+断言结果：bool
+```
+
+### 接口的嵌套组合
+
+> 一个接口可以包含一个或多个其他的接口，这相当于直接将这些内嵌接口的方法列举在外层接口中一样。只要接口的所有方法被实现，则这个接口中的所有嵌套接口的方法均可以被调用。
+
+
+```go
+package main
+
+import "fmt"
+
+//定义接口A
+type Ainterface interface {
+	SetName(string)
+}
+
+//定义接口B
+type Binterface interface {
+	GetName() string
+}
+
+type AnimalInterface interface {
+	//嵌套接口A和B
+	Ainterface
+	Binterface
+}
+
+type Dog struct {
+	Name string
+}
+type Cat struct {
+	Name string
+}
+
+func (this *Dog) GetName() string {
+	return this.Name
+}
+
+func (this *Dog) SetName(name string) {
+	this.Name = name
+}
+
+func (this *Cat) GetName() string {
+	return this.Name
+}
+
+func (this *Cat) SetName(name string) {
+	this.Name = name
+}
+
+func main() {
+	var animaler AnimalInterface
+	//dog实现接口
+	animaler = &Dog{
+		Name: "狗狗A",
+	}
+	fmt.Println(animaler.GetName())	//狗狗A
+	//cat实现接口
+	animaler = &Cat{
+		Name: "猫猫A",
+	}
+	fmt.Println(animaler.GetName())	//猫猫A
+}
+```
+
+> 获取切片或者结构体赋值给空接口后的值
+
+> 如果把切片或者结构体直接赋值给空接口，那么是无法直接获取切片或结构体里面的值
+
+> 要访问需要结合类型断言，示例如下：
+
+```go
+package main
+
+import "fmt"
+
+type Goods struct {
+	Id    int
+	Name  string
+	Price int
+}
+
+func main() {
+	//定义map,值为空接口类型
+	var orderInfo = make(map[string]interface{})
+	orderInfo["sn"] = "sn123456"
+	orderInfo["num"] = 5
+	orderInfo["goodsIds"] = []int{1, 2}
+
+	//定义orderInfo["goodsIds"]的值为切片，然后访问切片中的值
+
+	//不可以访问：异常： invalid operation: cannot index GoodsInfo["spec"] (map index expression of type interface{})
+	//fmt.Println(orderInfo["goodsIds"][0])
+
+	//正确的获取方式： 通过断言获取类型在读取
+	ids, _ := orderInfo["goodsIds"].([]int)
+	fmt.Println(ids[1]) //2
+
+	//实例结构体，并将结构体加入到map
+	var goods = &Goods{
+		Id:    1,
+		Name:  "蓝牙耳机",
+		Price: 500,
+	}
+	orderInfo["goods"] = goods
+
+	//不可以访问； 异常：orderInfo["goods"].Name undefined (type interface{} has no field or method Name)
+	//fmt.Println(orderInfo["goods"].Name)
+
+	//正确的获取方式： 通过断言获取类型在读取
+	goodsNew, _ := orderInfo["goods"].(Goods)
+	fmt.Println(goodsNew.Name) //蓝牙耳机
+}
+```
+
+## channel
+
+## goroutine
+
+## go mod常用命令
+
+### 什么是go mod
+
+```
+模块是相关Go包的集合。modules是源代码交换和版本控制的单元。
+go命令直接支持使用modules，包括记录和解析对其他模块的依赖性。modules替换旧的基于GOPATH的方法来指定在给定构建中使用哪些源文件。
+```
+### init
+
+> go mod init
+
+生成 go.mod 文件，此命令会在当前目录中初始化和创建一个新的go.mod文件，手动创建go.mod文件再包含一些module声明也等同该命令，而go mod init命令便是帮我们简便操作，可以帮助我们自动创建。
+
+### download
+
+> go mod download
+
+下载 go.mod 文件中指明的所有依赖，使用此命令来下载指定的模块，模块的格式可以根据主模块依赖的形式或者path@version形式指定。
+
+### tidy
+
+> go mod tidy
+
+整理现有的依赖，使用此命令来下载指定的模块，并删除已经不用的模块
+
+### graph
+
+> go mod graph
+
+查看现有的依赖结构，生成项目所有依赖的报告，但可读性太差，图形化更方便。
+
+### edit
+
+> go mod edit
+
+编辑 go.mod 文件，之后通过 download 或 edit 进行下载
+
+### vendor
+
+> go mod vendor
+
+导出项目所有的依赖到vendor目录，从mod中拷贝到项目的vendor目录下，IDE可以识别这样的目录。
+
+### verify
+
+> go mod verify
+
+校验一个模块是否被篡改过，查询某个常见的模块出错是否已被篡改
+
+### why
+
+> go mod why
+
+查看为什么需要依赖某模块，查询某个不常见的模块是否是哪个模块的引用
 
 ## Zap
 
@@ -697,3 +1065,25 @@ Zap().Error("错误信息")
 ### Map：自带锁的map
 
 
+
+## gorm
+
+> gorm框架是go的一个数据库连接及交互框架，一般用于连接关系型数据库
+
+### 概览
+- 全功能 ORM (无限接近)
+- 关联 (Has One, Has Many, Belongs To, Many To Many, 多态)
+- 钩子 (在创建/保存/更新/删除/查找之前或之后)
+- 预加载
+- 事务
+- 复合主键
+- SQL 生成器
+- 数据库自动迁移
+- 自定义日志
+- 可扩展性, 可基于 GORM 回调编写插件
+- 所有功能都被测试覆盖
+- 开发者友好
+
+### gorm文档地址
+
+> https://v1.gorm.io/zh_CN/docs/index.html
