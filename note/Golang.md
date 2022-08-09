@@ -812,7 +812,7 @@ func main() {
 }
 ```
 
-> 获取切片或者结构体赋值给空接口后的值
+### 获取切片或者结构体赋值给空接口后的值
 
 > 如果把切片或者结构体直接赋值给空接口，那么是无法直接获取切片或结构体里面的值
 
@@ -1087,3 +1087,138 @@ Zap().Error("错误信息")
 ### gorm文档地址
 
 > https://v1.gorm.io/zh_CN/docs/index.html
+
+
+## 优雅的实现重启服务
+
+###  怎样算优雅
+
+- 不关闭现有连接（正在运行中的程序）
+- 新的进程启动并替代旧进程
+- 新的进程接管新的连接
+- 连接要随时响应用户的请求，当用户仍在请求旧进程时要保持连接，新用户应请求新进程，不可以出现拒绝请求的情况
+
+### 流程
+
+1. 替换可执行文件或修改配置文件
+2. 发送信号量 SIGHUP
+3. 拒绝新连接请求旧进程，但要保证已有连接正常
+4. 启动新的子进程
+5. 新的子进程开始 Accet
+6. 系统将新的请求转交新的子进程
+7. 旧进程处理完所有旧连接后正常结束
+
+### 信号
+
+> 信号是事件发生时对进程的通知机制。有时也称之为软件中断。信号与硬件中断的相似之处在于打断了程序执行的正常流程，大多数情况下，无法预测信号到达的精确时间。
+
+> 因为一个具有合适权限的进程可以向另一个进程发送信号，这可以称为进程间的一种同步技术。当然，进程也可以向自身发送信号。然而，发往进程的诸多信号，通常都是源于内核。引发内核为进程产生信号的各类事件如下。
+
+- 硬件发生异常，即硬件检测到一个错误条件并通知内核，随即再由内核发送相应信号给相关进程。比如执行一条异常的机器语言指令（除 0，引用无法访问的内存区域）。
+- 用户键入了能够产生信号的终端特殊字符。如中断字符（通常是 Control-C）、暂停字符（通常是 Control-Z）。
+- 发生了软件事件。如调整了终端窗口大小，定时器到期等。
+
+> 针对每个信号，都定义了一个唯一的（小）整数，从 1 开始顺序展开。系统会用相应常量表示。Linux 中，1-31 为标准信号；32-64 为实时信号（通过 kill -l 可以查看）。
+
+> 信号达到后，进程视具体信号执行如下默认操作之一。
+
+- 忽略信号，也就是内核将信号丢弃，信号对进程不产生任何影响。
+- 终止（杀死）进程。
+- 产生 coredump 文件，同时进程终止。
+- 暂停（Stop）进程的执行。
+- 恢复进程执行。
+
+当然，对于有些信号，程序是可以改变默认行为的，这也就是 os/signal 包的用途
+
+
+> 因此在终端执行特定的组合键可以使系统发送特定的信号给此进程，完成一系列的动作时:
+
+- 我们执行的`ctrl + c`关闭gin服务端，会强制进程结束，导致正在访问的用户等出现问题
+- 常见的 kill -9 pid 会发送 SIGKILL 信号给进程，也是类似的结果
+
+
+### 使用endless包实现
+
+安装：
+
+> go get -u github.com/fvbock/endless
+
+示例：
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"log"
+	"syscall"
+	"time"
+
+	"github.com/fvbock/endless"
+)
+
+func main() {
+	//引入gin
+	routers := gin.Default()
+	//创建路由
+	routers.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"code": 200,
+			"msg":  "内容",	//一会儿从新build后修改："msg":  "内容11111",
+		})
+	})
+	//设置端口
+	address := fmt.Sprintf(":%d", 8889)
+	//获取endless实例
+	srv := endless.NewServer(address, routers)
+	//参数配置
+	srv.ReadHeaderTimeout = 10 * time.Second
+	srv.WriteTimeout = 10 * time.Second
+	srv.MaxHeaderBytes = 1 << 14 //左移：相当于1*2^14； 16k左右
+	//启动前打印pid
+	srv.BeforeBegin = func(add string) {
+		log.Printf("pid %d", syscall.Getpid())
+	}
+	//启动服务
+	err := srv.ListenAndServe()
+	if err != nil {
+		log.Printf("Server err: %v", err)
+	}
+}
+```
+
+
+验证：
+```
+//编译
+go build main.go
+
+//运行
+./main.go
+
+//访问接口
+curl 127.0.0.1:8889/ping	
+
+//输出结果
+{"code":200,"msg":"内容"}
+
+//代码中修改输出： 内容 > 内容1111
+
+//重新编译
+go build main.go
+
+//使用已经打印出来的pid重载
+kill -1 14384
+
+//访问接口
+curl 127.0.0.1:8889/ping
+
+//输出结果(可以看到更改的代码已经生效)
+{"code":200,"msg":"内容1111"}
+```
+
+
+### 参考
+
+> https://blog.csdn.net/weixin_39704066/article/details/110641987
+> https://blog.csdn.net/whatday/article/details/118657417

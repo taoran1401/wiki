@@ -1,6 +1,6 @@
 # git操作
 
-### Commit提交规约
+## Commit提交规约
 
 > Commit提交规约
 
@@ -14,7 +14,7 @@ test：增加测试
 chore：构建过程或辅助工具的变动
 ```
 
-### git打标签
+## git打标签
 
 ```
 git add .
@@ -24,7 +24,7 @@ git tag -a v1.0.1 -m "feat: 添加功能"
 git push origin v1.0.1
 ```
 
-### objects文件夹下大文件清理
+## objects文件夹下大文件清理
 
 由于之前上传过大文件，虽然文件已经删除，但是记录还在，导致git工程变的很大；
 
@@ -51,7 +51,7 @@ git gc      # 收集打包并合并松散对象，然后将不被任何commit引
 git prune   # 它会删除所有过期的、不可达的且未被打包的松散对象
 ```
 
-### git同时提交代码到gitee和github仓库
+## git同时提交代码到gitee和github仓库
 
 1.添加多个远程仓库
 
@@ -87,7 +87,7 @@ git push gitee [分支]
 git push github [分支]
 ```
 
-### gitlab仓库迁移
+## gitlab仓库迁移
 
 gitlab仓库迁移，包含提交信息，分支和标签等
 
