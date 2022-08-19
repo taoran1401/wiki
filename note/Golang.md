@@ -862,9 +862,409 @@ func main() {
 }
 ```
 
-## channel
+## goroutine和channel
 
-## goroutine
+### 先了解几个概念
+
+#### 进程：程序在操作系统中的一次执行过程，系统进行资源分配和调度的一个独立单位；一个进程可以创建和撤销多个线程，同一个进程中的多个线程之间可以并发执行。
+
+#### 线程：线程是进程的一个执行实体，是 CPU 调度和分派的基本单位，它是比进程更小的能独立运行的基本单位；一个线程上可以跑多个协程，协程是轻量级的线程
+
+#### 协程：独立的栈空间，共享堆空间，调度由用户自己控制，本质上有点类似于用户级线程，这些用户级线程的调度也是自己实现的
+
+#### 并发：多线程程序在单核心的 cpu 上运行，称为并发
+
+#### 并行：多线程程序在多核心的 cpu 上运行，称为并行
+
+并发与并行并不相同，并发主要由切换时间片来实现“同时”运行，并行则是直接利用多核实现多线程的运行，Go程序可以设置使用核心数，以发挥多核计算机的能力
+
+### goroutine
+
+#### 简介
+
+> 是一种非常轻量级的实现，可在单个进程里执行成千上万的并发任务，它是Go语言并发设计的核心; 说到底 goroutine 其实就是线程，但是它比线程更小，十几个 goroutine 可能体现在底层就是五六个线程，而且Go语言内部也实现了 goroutine 之间的内存共享。
+
+`goroutine`用法: 使用`go`关键词在方法前调用方法体
+```go
+// 调用方法
+go 函数名(参数)
+
+// 调用匿名方法并执行
+go func( 参数列表 ){
+    //函数体
+}( 调用参数列表 )
+```
+
+#### 等待goroutine执行
+
+在执行完主程序后程序将停止，这样会导致还没有执行完的goroutine中断，示例如下：
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	go test()
+	for i := 0; i <= 5; i++ {
+		fmt.Println("main runtime: ", i)
+		time.Sleep(time.Millisecond)
+	}
+	fmt.Println("主程序退出..")
+}
+
+func test() {
+	for i := 0; i <= 5; i++ {
+		fmt.Println("test runtime: ", i)
+		time.Sleep(time.Millisecond * 50)
+	}
+	fmt.Println("test协程执行完毕...")
+}
+```
+
+执行结果：
+```
+main runtime:  0
+test runtime:  0
+main runtime:  1
+main runtime:  2
+main runtime:  3
+test runtime:  1
+main runtime:  4
+main runtime:  5
+主程序退出..
+```
+
+根据上面程序输出的结果可以看到test还没有执行完毕，但是主程序已经执行完毕导致test无法执行剩下的程序；通常我们可以通过`sleep`推迟主程序关闭时间来达到等待协程执行完毕的目的，但是这个并不准确；下面我们将通过`sync.WaitGrop`来实现主程序等待`goroutine`执行完毕后在关闭
+
+> 关于`sync.WaitGrop`:解决协程同步和通讯
+
+> sync.WaitGroup只有3个方法：
+
+- Add()：添加计数中
+- Done()：是Add(-1)的别名，用途是减掉一个计数
+- Wait()：计数不为0时阻塞的运行
+
+示例代码：
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+var wg sync.WaitGroup
+
+func main() {
+	//协程计数器+1
+	wg.Add(1)
+	go test()
+	for i := 0; i <= 5; i++ {
+		fmt.Println("main runtime: ", i)
+		time.Sleep(time.Millisecond)
+	}
+	//等待协程执行完毕
+	wg.Wait()
+	fmt.Println("主程序退出..")
+}
+
+func test() {
+	for i := 0; i <= 5; i++ {
+		fmt.Println("test runtime: ", i)
+		time.Sleep(time.Millisecond * 50)
+	}
+	//标记执行完毕； 协程计数器-1
+	wg.Done()
+	fmt.Println("test协程执行完毕...")
+}
+```
+
+执行结果：
+```
+main runtime:  0
+test runtime:  0
+main runtime:  1
+main runtime:  2
+main runtime:  3
+test runtime:  1
+main runtime:  4
+main runtime:  5
+test runtime:  2
+test runtime:  3
+test runtime:  4
+test runtime:  5
+test协程执行完毕...
+主程序退出..
+```
+
+### channel
+
+#### 简介
+
+> channel 是Go语言在语言级别提供的 goroutine 间的通信方式。我们可以使用 channel 在两个或多个 goroutine 之间传递消息
+
+> go语言中的管道(channel)是一种特殊的类型。管道像一个传送带或者队列，总是遵循先入先出的规则，保证收发数据的顺讯。channel是引用类型
+
+#### 声明和创建
+
+声明`channel`：
+```go
+var ch1 chan int	//声明一个传递整型的管道
+var ch2 chan bool	//声明一个传递布尔型的管道
+var ch3 chan []int	//声明一个传递int切片的管道
+```
+
+创建`channel`
+```go
+ch := make(名称 类型, 容量)
+```
+
+#### 发送（将数据放在管道内）
+```go
+ch <- 值	//将值发送到管道中
+```
+
+#### 接收（从管道内取值）
+
+```go
+x := <- ch	//从管道中接收值并赋值给x
+<- ch	//从管道中接收值，忽略结果
+```
+
+#### 基础示例
+
+示例一：channel基础操作
+```go
+package main
+
+import "fmt"
+
+func main() {
+	//创建channel
+	ch := make(chan int, 4)
+
+	//channel里面存储数据
+	ch <- 1
+	ch <- 2
+	ch <- 3
+
+	//打印管道的长度和容量
+	fmt.Printf("值：%v 容量： %v 长度： %v \n", ch, cap(ch), len(ch)) //值：0xc000122080 容量： 4 长度： 3
+
+	//获取channel的内容
+	x := <-ch      //取出1
+	fmt.Println(x) //结果：1
+
+	<-ch //取出2，但是未赋值
+
+	y := <-ch
+	fmt.Println(y) //结果：3
+
+	//管道的类型（引用数据类型）
+	ch1 := ch      //将ch赋值给ch1
+	ch1 <- 4       //存储到ch1, 如果ch的值发生了变化，则说明是引用类型
+	z := <-ch      //取出ch的值
+	fmt.Println(z) //结果：4； 可以看到设置了ch1的值导致ch的值也发生了变化
+
+	//管道阻塞
+	//存储的值超过容量后 报错：fatal error: all goroutines are asleep - deadlock!
+	ch2 := make(chan int, 1)
+	ch2 <- 5
+	//ch2 <- 6
+
+	//如果管道数据已经全部取出，再取； 报错：fatal error: all goroutines are asleep - deadlock!
+	ch3 := make(chan int, 1)
+	ch3 <- 7
+
+	<-ch3
+	//<-ch3
+}
+```
+
+示例二：
+
+for range遍历管道时如果管道没有关闭会报错：fatal error: all goroutines are asleep - deadlock!
+
+for循环遍历则正常
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	//创建channel
+	ch := make(chan int, 4)
+
+	//channel里面存储数据
+	ch <- 1
+	ch <- 2
+	ch <- 3
+
+	//关闭管道，如果不关闭会报错：报错：fatal error: all goroutines are asleep - deadlock!
+	close(ch)
+
+	//for range遍历管道
+	for v := range ch {
+		fmt.Println(v)
+	}
+}
+```
+
+#### 示例：并行打印素数
+
+素数： 质数又称素数。一个大于1的自然数，除了1和它自身外，不能被其他自然数整除的数叫做质数
+
+下面这个例子用16个协程并行处理`1000000`的素数，经测试执行11秒左右，不用并行处理的时长在80秒左右
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+var wg sync.WaitGroup
+
+func main() {
+
+	startTime := time.Now().UnixMilli()
+
+	intChan := make(chan int, 1000)   //需要判断的值的范围
+	primeChan := make(chan int, 1000) //存放素数
+	exitChan := make(chan bool, 16)   //存放primeChan的关闭条件
+
+	wg.Add(1)
+	//向intChan中存放数据
+	go putNum(intChan, 1000000)
+
+	//开启16个协程来获取素数
+	for i := 0; i < 16; i++ {
+		wg.Add(1)
+		go primeNum(intChan, primeChan, exitChan)
+	}
+
+	wg.Add(1)
+	//打印素数
+	go printPrime(primeChan)
+
+	wg.Add(1)
+	go func() {
+		//读取完成标识，如果未读取完会等待读取
+		for i := 0; i < 16; i++ {
+			<-exitChan
+		}
+		close(primeChan)
+		wg.Done()
+	}()
+
+	//等待协程执行完毕
+	wg.Wait()
+	fmt.Println("执行结束, 执行时长：", time.Now().UnixMilli()-startTime)
+}
+
+//打印素数
+func printPrime(primeChan chan int) {
+	for num := range primeChan {
+		fmt.Println("素数：", num)
+	}
+	wg.Done()
+}
+
+//向intChan中存放数据
+func putNum(intChan chan int, num int) {
+	for i := 0; i < num; i++ {
+		intChan <- i
+	}
+	close(intChan)
+	wg.Done()
+}
+
+//获取素数存放到primeChan
+func primeNum(intChan chan int, primeChan chan int, exitChan chan bool) {
+	for num := range intChan {
+		flag := true
+		for i := 2; i < num; i++ {
+			//获取素数
+			if num%i == 0 {
+				flag = false
+				break
+			}
+		}
+		if flag {
+			primeChan <- num
+		}
+	}
+	//记录执行完成标识
+	exitChan <- true
+	wg.Done()
+}
+```
+
+#### 单向管道
+
+声明：
+```
+var 通道实例 chan<- 元素类型    // 只能写入数据的通道
+var 通道实例 <-chan 元素类型    // 只能读取数据的通道
+```
+
+我们在将一个 channel 变量传递到一个函数时，可以通过将其指定为单向 channel 变量，从而限制该函数中可以对此 channel 的操作，比如只能往这个 channel 中写入数据，或者只能从这个 channel 读取数据
+
+
+示例一：
+```go
+//创建只写管道
+chWrite := make(chan<- int, 2)
+chWrite <- 1
+chWrite <- 2
+//<-chWrite //只能写入; 报错：Invalid operation: <-chWrite (receive from the send-only type chan<- int)
+//创建只读管道
+chRead := make(<-chan int, 2)
+//chRead <- 1 //不能写入：报错：Invalid operation: chRead <- 1 (send to the receive-only type <-chan int
+```
+
+示例二：
+```go
+//限制函数只能对chan进行写入操作
+func Set(ch chan<- int) {
+	//todo
+}
+
+//限制函数只能对chan进行读取操作
+func Get(ch <-chan int) {
+	//todo
+}
+```
+
+
+#### select多路复用
+
+> select的使用类似switch语句，它有一系列case分支和一个默认分支。每个case会对应一个管道的通信(接收或发送)过程。select会一直等待，知道某个case的通信操作完成时，就会执行case分支对应的语句
+
+语法：
+```go
+select{
+	case <-管道:
+		...
+	case 数据 := <-管道:
+		...
+	case 管道 <- 数据
+		...
+}
+```
+
+
+示例：
+```go
+```
+
 
 ## go mod常用命令
 
@@ -1049,23 +1449,6 @@ Zap().Error("错误信息")
 ```
 
 
-
-## Sync包
-
-### 简介
-
-> 提供了基础的异步操作方法，包括互斥锁Mutex，执行一次Once和并发等待组WaitGroup
-
-### Mutex: 互斥锁
-### RWMutex：读写锁
-### WaitGroup：并发等待组
-### Once：执行一次
-### Cond：信号量
-### Pool：临时对象池
-### Map：自带锁的map
-
-
-
 ## gorm
 
 > gorm框架是go的一个数据库连接及交互框架，一般用于连接关系型数据库
@@ -1218,7 +1601,21 @@ curl 127.0.0.1:8889/ping
 ```
 
 
-### 参考
+## 资料
+
+> https://www.runoob.com/go/go-environment.html
+
+> https://gin-gonic.com/zh-cn/docs/
+
+> https://v1.gorm.io/zh_CN/docs/index.html
 
 > https://blog.csdn.net/weixin_39704066/article/details/110641987
+
 > https://blog.csdn.net/whatday/article/details/118657417
+
+> http://c.biancheng.net/golang/intro/
+
+> https://www.runoob.com/go/go-environment.html
+
+> https://www.topgoer.cn/
+
