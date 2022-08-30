@@ -1248,6 +1248,8 @@ func Get(ch <-chan int) {
 
 > select的使用类似switch语句，它有一系列case分支和一个默认分支。每个case会对应一个管道的通信(接收或发送)过程。select会一直等待，知道某个case的通信操作完成时，就会执行case分支对应的语句
 
+
+
 语法：
 ```go
 select{
@@ -1257,13 +1259,16 @@ select{
 		...
 	case 管道 <- 数据
 		...
+	default:
+		...
 }
 ```
 
 
-示例：
-```go
-```
+> 注意：当多个channel都具备了读写能力的时候，也就是说多个case都可以执行的条件下，select会执行哪一个？答案是随机执行一个
+
+> 注意：如果select中没有任何的channel准备好，那么当前的select所在的协程会陷入阻塞，直到有一个case满足条件，通常在实践中不想一直阻塞的话，为了避免这种情况可以加上default分支，或者加入一个超时定时器
+
 
 
 ## go mod常用命令
@@ -1601,21 +1606,124 @@ curl 127.0.0.1:8889/ping
 ```
 
 
-## 资料
+## protobuf
 
-> https://www.runoob.com/go/go-environment.html
+### 什么是protobuf
 
-> https://gin-gonic.com/zh-cn/docs/
+> Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用于结构化数据串行化，或者说序列化。它很适合做数据存储或 RPC 数据交换格式。可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式
 
-> https://v1.gorm.io/zh_CN/docs/index.html
+优势：
 
-> https://blog.csdn.net/weixin_39704066/article/details/110641987
+- 序列化后体积相比json和xml更小，适合网络传输
 
-> https://blog.csdn.net/whatday/article/details/118657417
+- 支持跨平台多语言
 
-> http://c.biancheng.net/golang/intro/
+- 消息格式升级和兼容性很好
 
-> https://www.runoob.com/go/go-environment.html
+- 序列化反序列化速度很快，快于json的处理速度
 
-> https://www.topgoer.cn/
+劣势：
 
+- 二进制格式导致可读性差
+
+### 安装
+
+安装不做详细说明，粗略说明一下
+
+安装protobuf
+
+> 下载地址：https://github.com/protocolbuffers/protobuf/releases
+
+根据自己的系统下载自己的版本安装即可
+
+注意配置环境变量
+
+检查是否安装完成
+```
+protoc --version
+libprotoc 3.21.5
+```
+
+安装protobuf编译插件protoc-gen-go;由于protoc-gen-go是Go写的，所以安装它变得很简单,通过下面命令直接安装
+
+> go install github.com/golang/protobuf/protoc-gen-go@latest
+
+
+### 简单语法
+
+```proto
+//指定版本信息，默认是proto2
+syntax = "proto3";
+
+//分好前面表示.proto文件所在路径； 分号后面表示生成go文件的包名
+option go_package = "../protopb;demo";
+
+//message定义一种消息类型，关键字message定义结构，在结构中可以嵌套定义结构，message定义的内容可生成一个结构体
+message Demo{
+    //类型 名称 标号(按顺序增加)
+    string Str = 1;
+    
+    int64 Num = 2;
+
+    repeated string Arr = 3;
+}
+```
+
+支持的数据类型以及和其他语言的对照：
+
+![支持的数据类型](../static/images/160243_8PQu_571282.png)
+
+### protobuf生成go文件
+
+
+```
+# 将./目录下的所有.proto文件生成go文件
+protoc --go_out=./ *.proto
+
+# 将./t目录下的所有demo.proto文件生成go文件
+protoc --go_out=./ demo.proto
+```
+
+执行后如下：
+
+![221730](../static/images/221730.jpg)
+
+生成的go文件可以很明确看到在proto文件中定义的内容被转换成了结构体，其他方法 会在后面继续说明
+
+### 序列化和反序列化
+
+> 序列化`proto.Marshal`
+
+> 反序列化`proto.Unmarshal`
+
+示例：
+```go
+package main
+
+import (
+	"fmt"
+	demo "taogin/demo/protopb"
+
+	"github.com/golang/protobuf/proto"
+)
+
+func main() {
+	//使用生成go文件中的结构体赋值
+	d := &demo.Demo{
+		Str: "字符串",
+		Num: 100,
+		Arr: []string{"arr1", "arr2"},
+	}
+
+	//序列化
+	data, _ := proto.Marshal(d)
+	fmt.Println(data)
+	//结果： [10 9 229 173 151 231 172 166 228 184 178 16 100 26 4 97 114 114 49 26 4 97 114 114 50
+
+	//反序列化
+	d1 := &demo.Demo{}
+	proto.Unmarshal(data, d1)
+	fmt.Println(d1)
+	//结果：Str:"字符串" Num:100 Arr:"arr1" Arr:"arr2"
+}
+```
