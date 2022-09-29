@@ -2,6 +2,3 @@
 
 * 项目
   * [colorful-admin](https://github.com/taoran1401/colorful-admin)
-  * colorful-blog
-  * colorful-bookmark
-  * colorful-search
