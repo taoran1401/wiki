@@ -1,20 +1,18 @@
 * 后端
-  * [PHP](note/PHP.md)
-  
   * [Golang](note/Golang.md)
-  
+  * [PHP](note/PHP.md)
+
 * 前端
   * [html/css](note/HtmlCss.md)
-  * [vuex](note/Vuex.md)
-  * [NuxtJs](note/NuxtJs.md)
+  <!-- * [NuxtJs](note/NuxtJs.md) -->
   * [VueElementAdmin](note/VueElementAdmin.md)
-  * [ElementUI](note/#)
+  <!-- * [ElementUI](note/#) -->
 
 * 数据库
   * [Mysql](note/Mysql.md)
-  * [Mycat](note/MyCat.md)
   * [Redis](note/Redis.md)
   * [MongoDB](note/MongoDB.md)
+  <!-- * ClickHouse -->
 
 * 程序员内功
   * [设计模式](DesignPatterns.md)
