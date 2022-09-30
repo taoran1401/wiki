@@ -15,7 +15,7 @@
   <!-- * ClickHouse -->
 
 * 程序员内功
-  * [设计模式](DesignPatterns.md)
+  * [设计模式](note/DesignPatterns.md)
   * [数据结构和算法](DataStructureAndAlgorithms.md)
   * [网络协议](NetworkingProtocol.md)
 
