@@ -280,7 +280,6 @@ func try(entry func()) {
 
 ## sync
 
-
 ## flag包
 
 ## reflect反射
@@ -288,3 +287,68 @@ func try(entry func()) {
 ## websocket
 
 ## git submodule
+
+
+```
+? 添加了索引，并且使用到了索引，为什么还是扫描全表（explan详解）
+
+
+mysql:
+wiki: 权限管理(0.5)(#)
+wiki: 索引(0.5)
+wiki: 锁(0.5)
+wiki: 事务(0.5)
+wiki: 调优(0.5)
+
+mongodb:
+wiki: 基础操作(0.5)(-)
+
+docker:
+dockerfile	(0.5)(构建nginx+php环境; 解决crmeb验证码：Call to undefined function crmeb\\utils\\imagettftext(); 上传镜像到aliyun)(-)
+docker-compose	(0.5)(快速搭建nginx+php环境)(-)
+
+go:
+wiki: 区块链(5)
+wiki: go-zero(5)
+
+wiki:23设计模式(3)
+wiki:数据结构(6)
+wiki:网络协议(6)
+wiki:rabbitmq(2)
+
+mst:php,go(5)
+
+36
+```
+
+```
+video(30)
+webnav-tango(web*2,go*1,test*1,deploy*1)(5)
+区块链gm{
+	
+}
+webnav-tango-zero(微服务版本)(本地开发版本)
+```
+
+```
+A{
+	区块链
+	go-zero
+	go-zero微服务
+	网络协议
+	rabbitmq高级
+	高并发处理(百万级)
+}
+
+B{
+	mysql相关(常用的查询)
+	设计模式
+	数据结构和算法
+}
+
+C{
+	wiki: mst
+	wiki: docker/dockerfile/docker-compose
+	wiki: mongo基础操作
+}
+```
