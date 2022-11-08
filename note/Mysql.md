@@ -9,7 +9,6 @@ mysql的用户信息可以通过`mysql`库的`user`表查看，如下
 
 查看所有用户情况： 
 ```sql
--- 
 select * from mysql.`user`;
 ```
 
@@ -127,7 +126,7 @@ password_lifetime: 密码生存时间(比如设置密码有效30天)
 
 ### 权限列表
 
-> 语法：
+> 查看权限列表语法：
 
 ```
 show privileges;
