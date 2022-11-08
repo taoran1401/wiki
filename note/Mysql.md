@@ -216,7 +216,7 @@ revoke [权限1,权限2,...权限n] on [数据库].[表名] from [用户名]@[�
 ```sql
 -- 回收用户全部权限
 revoke ALL on *.* from 'demo_read'@'%';
--- 回收用户删除权限
+-- 回收用户指定权限
 revoke INSERT,UPDATE,DELETE on demo01.* from 'demo_rw'@'%';
 ```
 
