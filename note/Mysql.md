@@ -133,7 +133,6 @@ show privileges;
 ```
 
 执行结果如下：
-| ---- | ---- | ---- |
 
 | 权限 | 权限级别 | 说明 |
 | ---- | ---- | ---- |
@@ -225,7 +224,7 @@ revoke INSERT,UPDATE,DELETE on demo01.* from 'demo_rw'@'%';
 
 ## 常用函数
 
-> 数值型函数
+### 数值型函数
 
 |  函数名称  |  作用  |
 |  ----  |  ----  |
@@ -246,7 +245,7 @@ revoke INSERT,UPDATE,DELETE on demo01.* from 'demo_rw'@'%';
 |  ATAN  |  求反正切值，与函数 TAN 互为反函数  |
 |  COT  |  求余切值  |
 
-> 字符串函数
+### 字符串函数
 
 |  函数名称  |  作用  |
 |  ----  |  ----  |
@@ -263,7 +262,7 @@ revoke INSERT,UPDATE,DELETE on demo01.* from 'demo_rw'@'%';
 |  REVERSE  |  字符串反转（逆序）函数，返回与原始字符串顺序相反的字符串  |
 
 
-> 日期和时间函数
+### 日期和时间函数
 
 |  函数名称  |  作用  |
 |  ----  |  ----  |
@@ -291,7 +290,7 @@ revoke INSERT,UPDATE,DELETE on demo01.* from 'demo_rw'@'%';
 |  WEEKDAY  |  获取指定日期在一周内的对应的工作日索引  |
 
 
-> 聚合函数
+### 聚合函数
 
 |  函数名称  |  作用  |
 |  ----  |  ----  |
@@ -302,7 +301,7 @@ revoke INSERT,UPDATE,DELETE on demo01.* from 'demo_rw'@'%';
 |  AVG  |  求平均值，返回指定列数据的平均值  |
 
 
-> 流程控制函数
+### 流程控制函数
 
 |  函数名称  |  作用  |
 |  ----  |  ----  |
@@ -311,10 +310,11 @@ revoke INSERT,UPDATE,DELETE on demo01.* from 'demo_rw'@'%';
 |  CASE  |  搜索语句  |
 
 
-
-
-
 ## 索引
+
+```
+explain: 
+```
 
 ## 锁
 

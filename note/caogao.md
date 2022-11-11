@@ -293,6 +293,7 @@ func try(entry func()) {
 ? 添加了索引，并且使用到了索引，为什么还是扫描全表（explan详解）
 
 
+
 mysql:
 wiki: 权限管理(0.5)(#)
 wiki: 索引(0.5)
@@ -351,4 +352,12 @@ C{
 	wiki: docker/dockerfile/docker-compose
 	wiki: mongo基础操作
 }
+```
+
+```
+货币：金币
+田：
+种子：
+
+金币购买种子 - 种下种子 - 到点收获 - 售出购买金币 
 ```
