@@ -1,8 +1,10 @@
 * 后端
   * [Golang](note/Golang.md)
   * [PHP](note/PHP.md)
-  * [git](note/git.md)
-  * [docker](note/docker.md)
+  * [Git](note/Git.md)
+  * [Docker](note/Docker.md)
+  * [Lua](note/Lua.md)
+  * [RabbitMQ](note/RabbitMQ.md)
 
 * 前端
   * [html/css](note/HtmlCss.md)

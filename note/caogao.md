@@ -304,30 +304,25 @@ wiki: 调优(0.5)
 mongodb:
 wiki: 基础操作(0.5)(-)
 
-docker:
-dockerfile	(0.5)(构建nginx+php环境; 解决crmeb验证码：Call to undefined function crmeb\\utils\\imagettftext(); 上传镜像到aliyun)(-)
-docker-compose	(0.5)(快速搭建nginx+php环境)(-)
+wiki: docker(1)(#)
 
 go:
 wiki: 区块链(5)
 wiki: go-zero(5)
 
-wiki:23设计模式(3)
+wiki:23设计模式(5)
 wiki:数据结构(6)
 wiki:网络协议(6)
-wiki:rabbitmq(2)
+wiki:rabbitmq(2)(-1)
 
 mst:php,go(5)
 
-36
+35.5
 ```
 
 ```
 video(30)
 webnav-tango(web*2,go*1,test*1,deploy*1)(5)
-区块链gm{
-	
-}
 webnav-tango-zero(微服务版本)(本地开发版本)
 ```
 
@@ -349,15 +344,6 @@ B{
 
 C{
 	wiki: mst
-	wiki: docker/dockerfile/docker-compose
 	wiki: mongo基础操作
 }
-```
-
-```
-货币：金币
-田：
-种子：
-
-金币购买种子 - 种下种子 - 到点收获 - 售出购买金币 
 ```
