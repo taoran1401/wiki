@@ -521,3 +521,11 @@ echo 'LIBRARY_PATH=/disk2/temp/rabbitmq-c-master/build/librabbitmq/:$LIBRARY_PAT
 6: 刷新配置
 source ~/.bashrc
 ```
+
+<!-- ## 防止消息丢失 -->
+
+<!-- ### 消息持久化 -->
+
+<!-- ### 消息应答机制 -->
+
+<!-- ### 事务 -->

@@ -4,7 +4,6 @@ php 使用psr
 php扩展
 php 内存管理和垃圾回收机制
   https://www.jb51.net/article/213549.htm
-hyperf wap
 ```
 
 ## mysql: case when语法
@@ -290,10 +289,6 @@ func try(entry func()) {
 
 
 ```
-? 添加了索引，并且使用到了索引，为什么还是扫描全表（explan详解）
-
-
-
 mysql:
 wiki: 权限管理(0.5)(#)
 wiki: 索引(0.5)
@@ -313,7 +308,7 @@ wiki: go-zero(5)
 wiki:23设计模式(5)
 wiki:数据结构(6)
 wiki:网络协议(6)
-wiki:rabbitmq(2)(-1)
+wiki:rabbitmq(1)
 
 mst:php,go(5)
 
@@ -333,7 +328,6 @@ A{
 	go-zero微服务
 	网络协议
 	rabbitmq高级
-	高并发处理(百万级)
 }
 
 B{
@@ -345,5 +339,7 @@ B{
 C{
 	wiki: mst
 	wiki: mongo基础操作
+	令牌桶限流
+	高并发处理(百万级)模拟实践
 }
 ```
