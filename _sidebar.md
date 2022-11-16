@@ -16,7 +16,6 @@
   * [Mysql](note/Mysql.md)
   * [Redis](note/Redis.md)
   * [MongoDB](note/MongoDB.md)
-  <!-- * ClickHouse -->
 
 * 程序员内功
   * [设计模式](note/DesignPatterns.md)

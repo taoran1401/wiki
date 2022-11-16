@@ -297,7 +297,7 @@ wiki: 事务(0.5)
 wiki: 调优(0.5)
 
 mongodb:
-wiki: 基础操作(0.5)(-)
+wiki: 基础操作(0.5)(#)
 
 wiki: docker(1)(#)
 
@@ -312,7 +312,7 @@ wiki:rabbitmq(1)
 
 mst:php,go(5)
 
-35.5
+35
 ```
 
 ```
