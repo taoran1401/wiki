@@ -62,6 +62,25 @@
 
 [github](https://github.com/)
 
+## PHP 开启或关闭错误提示
+
+两种方式修改
+
+在文件中添加以下代码
+```
+ini_set("display_errors", "On"); 
+error_reporting(E_ALL | E_STRICT);
+```
+
+通过php.ini实现
+```
+# 开发错误提示
+display_errors = On
+
+# 修改错误级别
+error_reporting = E_ALL
+```
+
 ## Phar打包
 
 > Phar 是在 PHP5 之后提供的一种类似于将代码打包的工具。本质上是想依照 Java 的 Jar 文件那种形式的代码包，不过本身由于 PHP 是不编译的，所以这个 Phar 实际上就是将代码原样的进行打包，不会进行编译。但是我们可以对打包的 Phar 包进行压缩操作。
@@ -319,3 +338,372 @@ var_dump($useMemory);
 
 > https://blog.csdn.net/weixin_43885417/article/details/100990106
 > https://www.php.cn/php-ask-453781.html
+
+## golang开发php扩展
+
+环境：
+```
+ubuntu 20.04
+php 7.4.33
+golang 1.18
+```
+
+> mac上编译可能会有问题, 我换到linux才成功
+
+### ext_skel脚本
+
+PHP 扩展由几个文件组成，这些文件对所有扩展来说都是通用的。不同扩展之间，这些文件的很多细节是相似的，只是要费力去复制每个文件的内容。幸运的是，有脚本可以做所有的初始化工作，名为 `ext_skel`，自 PHP 4.0 起与其一起分发。
+
+不带参数运行 `ext_skel` 在 PHP 7.4 中会产生以下输出：
+
+
+> 该脚本存放目录：`php源码包/etc/ext_skel.php`
+
+```
+php ext_skel.php --ext <name> [--experimental] [--author <name>]
+                   [--dir <path>] [--std] [--onlyunix]
+                   [--onlywindows] [--help]
+
+  --ext <name>          The name of the extension defined as <name>
+  --experimental        Passed if this extension is experimental, this creates
+                        the EXPERIMENTAL file in the root of the extension
+  --author <name>       Your name, this is used if --std is passed and for the
+                        CREDITS file
+  --dir <path>          Path to the directory for where extension should be
+                        created. Defaults to the directory of where this script
+                        lives
+  --std                 If passed, the standard header used in extensions that
+                        is included in the core, will be used
+  --onlyunix            Only generate configure scripts for Unix
+  --onlywindows         Only generate configure scripts for Windows
+  --help                This help
+```
+
+参数说明如上，主要用`--ext`来定义扩展名称，`--onlyunix`和`--onlywindows`设置为什么环境生成配置脚本
+
+### 生成config.m4
+
+进入php源码包的`ext`目录,执行命令：
+```
+php ./ext_skel.php --ext phpextgo
+```
+
+返回结果：
+```
+Copying config scripts... done
+Copying sources... done
+Copying tests... done
+
+Success. The extension is now ready to be compiled. To do so, use the
+following steps:
+
+cd /path/to/php-src/phpextgo
+phpize
+./configure
+make
+
+Don't forget to run tests once the compilation is done:
+make test
+
+Thank you for using PHP!
+```
+
+执行完成后可以看到php源码包目录下的`ext`下生成刚才指定名字目录`phpextgo`
+
+### 编写golang代码
+
+进入通过`ext_skel.php`生成的目录(`{php源码目录}/ext/phpextgo`)中编写`golang`代码
+
+#### main.go
+`main.go`格式如下：
+```go
+package main
+/*
+    php扩展.c文件内容
+*/
+import "C"
+
+func main() {}
+```
+
+`main.go`示例代码：
+```go
+package main
+
+//#cgo CFLAGS: -g -I /disk2/soft/php-7.4.33 -I /disk2/soft/php-7.4.33/main -I /disk2/soft/php-7.4.33/TSRM -I /disk2/soft/php-7.4.33/Zend  -I /disk2/soft/php-7.4.33/ext -I /disk2/soft/php-7.4.33/ext/date/lib -DHAVE_CONFIG_H
+//#cgo LDFLAGS: -Wl,--export-dynamic -Wl,--unresolved-symbols=ignore-all
+/*
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include "php.h"
+#include "ext/standard/info.h"
+#include "php_phpextgo.h"
+
+#ifndef ZEND_PARSE_PARAMETERS_NONE
+#define ZEND_PARSE_PARAMETERS_NONE() \
+ZEND_PARSE_PARAMETERS_START(0, 0) \
+ZEND_PARSE_PARAMETERS_END()
+#endif
+
+PHP_FUNCTION(phpextgo_test1)
+{
+ZEND_PARSE_PARAMETERS_NONE();
+
+php_printf("The extension %s is loaded and working!\r\n", "phpextgo");
+}
+
+PHP_FUNCTION(phpextgo_test2)
+{
+char *var = "World";
+size_t var_len = sizeof("World") - 1;
+zend_string *retval;
+
+ZEND_PARSE_PARAMETERS_START(0, 1)
+Z_PARAM_OPTIONAL
+Z_PARAM_STRING(var, var_len)
+ZEND_PARSE_PARAMETERS_END();
+
+retval = strpprintf(0, "Hello %s", var);
+
+RETURN_STR(retval);
+}
+
+PHP_RINIT_FUNCTION(phpextgo)
+{
+#if defined(ZTS) && defined(COMPILE_DL_PHPEXTGO)
+ZEND_TSRMLS_CACHE_UPDATE();
+#endif
+
+return SUCCESS;
+}
+
+PHP_MINFO_FUNCTION(phpextgo)
+{
+php_info_print_table_start();
+php_info_print_table_header(2, "phpextgo support", "enabled");
+php_info_print_table_end();
+}
+
+ZEND_BEGIN_ARG_INFO(arginfo_phpextgo_test1, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO(arginfo_phpextgo_test2, 0)
+ZEND_ARG_INFO(0, str)
+ZEND_END_ARG_INFO()
+
+static const zend_function_entry phpextgo_functions[] = {
+PHP_FE(phpextgo_test1,		arginfo_phpextgo_test1)
+PHP_FE(phpextgo_test2,		arginfo_phpextgo_test2)
+PHP_FE_END
+};
+
+zend_module_entry phpextgo_module_entry = {
+STANDARD_MODULE_HEADER,
+"phpextgo",
+phpextgo_functions,
+NULL,
+NULL,
+PHP_RINIT(phpextgo),
+NULL,
+PHP_MINFO(phpextgo),
+PHP_PHPEXTGO_VERSION,
+STANDARD_MODULE_PROPERTIES
+};
+
+
+#ifdef COMPILE_DL_PHPEXTGO
+# ifdef ZTS
+ZEND_TSRMLS_CACHE_DEFINE()
+# endif
+ZEND_GET_MODULE(phpextgo)
+#endif
+*/
+import "C"
+
+func main() {}
+```
+
+- CFLAGS -g -I说明：-g是支持gdb调试，-I是导入头文件路径,主要是防止编译时找不到文件，比如上面`include "php.h"`，因为`php.h`在`main`目录下，如果没有设置路径就会在当前路径下面找`php.h`，那就会报错; 上面示例的路径`/disk2/soft/php-7.4.33`需要根据自己的路径替换
+
+#### function.go
+
+通过`golang`语法写`c`语言接口函数，通过`export`关键字导出为`c`函数
+
+`function.go`示例代码：
+```go
+package main
+
+import "C"
+
+//export phpextPrint
+func phpextPrint() int {
+	return 100
+}
+```
+
+示例很简单，打印数字`100`
+
+### 编译安装
+
+进入`{php源码目录}/ext/phpextgo`下,然后就和安装php的扩展流程相同
+
+- 执行`{php安装目录}/bin/phpize`, 这个脚本可以检测php环境并且在特定目录生成相应的`configure`文件
+
+- 通过生成出来的`configure`来进行编译配置, 操作如下：
+
+```
+./configure --with-php-config=/usr/local/php/bin/php-config
+```
+
+- 生成动态库连接`.so`文件，并移动到扩展安装目录(扩展安装目录示例：`/usr/local/php/lib/php/extensions/no-debug-non-zts-20190902`)
+```
+go build -gcflags "-l" -buildmode=c-shared -o phpextgo.so *.go
+```
+
+- 在`php.ini`添加配置
+
+```
+extension=phpextgo.so
+```
+
+然后通过`php -m`查看扩展是否安装
+
+### 调用自定义的函数
+
+现在用在php调用一下内置的测试函数
+
+```php
+php -r "echo phpextgo_test2();";  //输出：Hello World
+```
+
+内置的函数可以调用，但是现在还不能调用我们自定义的函数，现在我们来对`main.go`改造一下
+
+`main.go`改造:
+
+- 引入`phpextgo.h`文件，不引入会找不到`function.go`定义的函数
+- 这里主要改造的模块是通过`PHP_FUNCTION(phpextgo_print)`来添加我们的函数调用,括号里面的字符串就是php可以调用的函数名字
+- 并将函数注册进模块`static const zend_function_entry phpextgo_functions[]`
+- 添加宏定义`ZEND_BEGIN_ARG_INFO`
+
+```go
+package main
+
+//#cgo CFLAGS: -g -I /disk2/soft/php-7.4.33 -I /disk2/soft/php-7.4.33/main -I /disk2/soft/php-7.4.33/TSRM -I /disk2/soft/php-7.4.33/Zend  -I /disk2/soft/php-7.4.33/ext -I /disk2/soft/php-7.4.33/ext/date/lib -DHAVE_CONFIG_H
+//#cgo LDFLAGS: -Wl,--export-dynamic -Wl,--unresolved-symbols=ignore-all
+/*
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include "php.h"
+#include "ext/standard/info.h"
+#include "phpextgo.h"
+#include "php_phpextgo.h"
+
+#ifndef ZEND_PARSE_PARAMETERS_NONE
+#define ZEND_PARSE_PARAMETERS_NONE() \
+ZEND_PARSE_PARAMETERS_START(0, 0) \
+ZEND_PARSE_PARAMETERS_END()
+#endif
+
+PHP_FUNCTION(phpextgo_print)
+{
+zend_long res;
+res = phpextPrint();
+RETURN_LONG(res);
+}
+
+PHP_FUNCTION(phpextgo_test1)
+{
+ZEND_PARSE_PARAMETERS_NONE();
+
+php_printf("The extension %s is loaded and working!\r\n", "phpextgo");
+}
+
+PHP_FUNCTION(phpextgo_test2)
+{
+char *var = "World";
+size_t var_len = sizeof("World") - 1;
+zend_string *retval;
+
+ZEND_PARSE_PARAMETERS_START(0, 1)
+Z_PARAM_OPTIONAL
+Z_PARAM_STRING(var, var_len)
+ZEND_PARSE_PARAMETERS_END();
+
+retval = strpprintf(0, "Hello %s", var);
+
+RETURN_STR(retval);
+}
+
+PHP_RINIT_FUNCTION(phpextgo)
+{
+#if defined(ZTS) && defined(COMPILE_DL_PHPEXTGO)
+ZEND_TSRMLS_CACHE_UPDATE();
+#endif
+
+return SUCCESS;
+}
+
+PHP_MINFO_FUNCTION(phpextgo)
+{
+php_info_print_table_start();
+php_info_print_table_header(2, "phpextgo support", "enabled");
+php_info_print_table_end();
+}
+
+ZEND_BEGIN_ARG_INFO(arginfo_phpextgo_test1, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO(arginfo_phpextgo_test2, 0)
+ZEND_ARG_INFO(0, str)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO(arginfo_phpextgo_print, 0)
+ZEND_END_ARG_INFO()
+
+static const zend_function_entry phpextgo_functions[] = {
+PHP_FE(phpextgo_test1,		arginfo_phpextgo_test1)
+PHP_FE(phpextgo_test2,		arginfo_phpextgo_test2)
+PHP_FE(phpextgo_print,		arginfo_phpextgo_print)
+PHP_FE_END
+};
+
+zend_module_entry phpextgo_module_entry = {
+STANDARD_MODULE_HEADER,
+"phpextgo",
+phpextgo_functions,
+NULL,
+NULL,
+PHP_RINIT(phpextgo),
+NULL,
+PHP_MINFO(phpextgo),
+PHP_PHPEXTGO_VERSION,
+STANDARD_MODULE_PROPERTIES
+};
+
+
+#ifdef COMPILE_DL_PHPEXTGO
+# ifdef ZTS
+ZEND_TSRMLS_CACHE_DEFINE()
+# endif
+ZEND_GET_MODULE(phpextgo)
+#endif
+*/
+import "C"
+
+func main() {}
+```
+
+然后现在再重复编译流程，替换扩展文件(`phpextgo.so`)即可
+
+测试一下：
+```
+php -r "echo phpextgo_print();" //输出： 100
+```
+
+> 注意： 如果更改了`function.go`里面的函数，那么需要用上面最初的`main.go`来编译出`phpextgo.h`文件，再修改成改造后的`main.go`重新编译
+
+
