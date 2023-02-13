@@ -1605,6 +1605,85 @@ curl 127.0.0.1:8889/ping
 {"code":200,"msg":"内容1111"}
 ```
 
+## websocket
+
+websocket的概念： 略
+
+golang中使用websocket的简易流程：
+- 升级http连接
+- 接收消息
+- 发送信息
+
+### 升级http连接
+
+> 使用`gorilla/websocket`包升级http到websocket
+
+```go
+func Server(w http.ResponseWriter, r *http.Request) {
+	//初始化
+	upgrader := websocket.Upgrader{
+		ReadBufferSize:  4096,
+		WriteBufferSize: 4096,
+		CheckOrigin: func(r *http.Request) bool {
+			//无论哪个主机尝试连接到我们的端点，都简单地返回 true
+			return true
+		},
+	}
+
+	//升级连接
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		//错误处理	
+	}
+}
+```
+
+参数说明：
+
+> socket会带有两个缓冲区，一个用于发送，一个用于接收。因为这是个先进先出的结构，有时候也叫它们发送、接收队列。
+
+ReadBufferSize: 接收缓冲区大小； 单位字节
+
+WriteBufferSize: 发送缓存区大小; 单位字节
+
+> Origin控制 
+
+CheckOrigin: 浏览器允许Javascript应用程序打开连接到任意主机的Websocket。需要由服务端负责根据浏览器请求中的Origin头部来执行一个origin策略。Upgrader调用CheckOrigin域所指定的函数来检查origin。如果CheckOrigin函数返回false，Upgrade方法将会握手失败并响应HTTP403状态。如果CheckOrigin字段是nil，Upgrarder将使用一个缺省的安全的策略：当请求头部出现了Origin但值不等于Host头，将会握手失败。
+
+### 接收消息
+
+```go
+func (this *Client) recvMessage(wsConn *websocket.Conn) {
+	for {
+		_, message, err := wsConn.ReadMessage()
+		if err != nil {
+			//错误处理
+		}
+
+		//转发读取的channel消息
+		this.sendChan <- message
+	}
+}
+```
+
+### 发送消息
+
+```go
+func (this *Client) sendMessage(wsConn *websocket.Conn) {
+	for {
+		//接收读取的channel消息并发送
+		buf := <-this.sendChan
+		err := wsConn.WriteMessage(websocket.BinaryMessage, buf)
+		if err != nil {
+			//错误处理
+		}
+	}
+}
+```
+`WriteMessage`的第一个参数`messageType`：
+- TextMessage: 表示文本数据消息
+- BinaryMessage: 表示二进制数据消息
+
 
 ## protobuf
 
@@ -1727,3 +1806,255 @@ func main() {
 	//结果：Str:"字符串" Num:100 Arr:"arr1" Arr:"arr2"
 }
 ```
+
+//## 用Go写个docker
+
+//### namespace
+
+linux对线程提供了六种隔离机制
+
+// todo
+
+//### 报错syscall.CLONE_NEWUTS，需要设置linux环境才能加载正确
+
+//### 用代码实践
+
+//### Cgroup
+
+//#### 挂载hierarchy
+
+
+
+## grpcui
+
+> grpcui通过web的方式对grpc进行调试，类似于postman对http接口的调试
+
+> 项目地址： `github.com/fullstorydev/grpcui`
+
+### 安装
+
+安装命令：
+```
+go install github.com/fullstorydev/grpcui/cmd/grpcui
+```
+
+验证是否安装成功：
+```
+grpcui -help
+```
+
+返回：
+```
+Usage:
+        grpcui [flags] [address]
+
+Starts a web server that hosts a web UI for sending RPCs to the given address.
+
+The address will typically be in the form "host:port" where host can be an IP
+address or a hostname and port is a numeric port or service name. If an IPv6
+address is given, it must be surrounded by brackets, like "[2001:db8::1]". For
+Unix variants, if a -unix=true flag is present, then the address must be the
+path to the domain socket.
+
+Most flags control how the connection to the gRPC server is established. The
+web server will always bind only to localhost, without TLS, so only the port
+can be controlled via command-line flags.
+
+Available flags:
+  -H value
+        Additional headers in 'name: value' format. May specify more than one
+        via multiple flags. These headers will also be included in reflection
+        requests to a server. These headers are not shown in the gRPC UI form.
+        If the user enters conflicting metadata, the user-entered value will be
+        ignored and only the values present on the command-line will be used.
+  -also-serve value
+        Indicates the name of an additional file or folder that the gRPC UI web
+        server can serve. This can be useful for serving other assets, like
+        images, when a custom CSS is used via -extra-css flags. Multiple assets
+        can be added to the server by specifying multiple -also-serve flags. The
+        named file will be available at a URI of "/<base-name>", where
+        <base-name> is the name of the file, excluding its path. If the given
+        name is a folder, the folder's contents are available at URIs that are
+        under "/<base-name>/". It is an error to specify multiple files or
+        folders that have the same base name.
+  -authority string
+        The authoritative name of the remote server. This value is passed as the
+        value of the ":authority" pseudo-header in the HTTP/2 protocol. When TLS
+        is used, this will also be used as the server name when verifying the
+        server's certificate. It defaults to the address that is provided in the
+        positional arguments.
+  -base-path string
+        The path on which the web UI is exposed.
+        Defaults to slash ("/"), which is the root of the server.
+        Example: "/debug/grpcui". (default "/")
+  -bind string
+        The address on which the web UI is exposed. (default "127.0.0.1")
+  -cacert string
+        File containing trusted root certificates for verifying the server.
+        Ignored if -insecure is specified.
+  -cert string
+        File containing client certificate (public key), to present to the
+        server. Not valid with -plaintext option. Must also provide -key option.
+  -connect-fail-fast
+        If true, non-temporary errors (such as "connection refused" during
+        initial connection will cause the program to immediately abort. This
+        is the default and is appropriate for interactive uses of grpcui. But
+        long-lived server use (like as a sidecar to a gRPC server) will prefer
+        to set this to false for more robust startup. (default true)
+  -connect-timeout float
+        The maximum time, in seconds, to wait for connection to be established.
+        Defaults to 10 seconds.
+  -debug-client
+        When true, the client JS code in the gRPCui web form will log extra
+        debug info to the console.
+  -default-header value
+        Additional headers to add to metadata in the gRPCui web form. Each value
+        should be in 'name: value' format. May specify more than one via multiple
+        flags. These headers are just defaults in the UI and maybe changed or
+        removed by the user that is interacting with the form.
+  -examples string
+        Load examples from the given JSON file. The examples are shown in the UI
+        which lets users pick pre-defined RPC and request data, like a recipe.
+        This can be templates for common requests or could even represent a test
+        suite as a sequence of RPCs. This is similar to the "collections" feature
+        in postman. The format of this file is the same as used when saving
+        history from the gRPC UI "History" tab.
+  -expand-headers
+        If set, headers may use '${NAME}' syntax to reference environment
+        variables. These will be expanded to the actual environment variable
+        value before sending to the server. For example, if there is an
+        environment variable defined like FOO=bar, then a header of
+        'key: ${FOO}' would expand to 'key: bar'. This applies to -H,
+        -rpc-header, -reflect-header, and -default-header options. No other
+        expansion/escaping is performed. This can be used to supply
+        credentials/secrets without having to put them in command-line arguments.
+  -extra-css value
+        Indicates the name of a CSS file to load from the web form. This allows
+        injecting custom styles into the page, to customize the look. Multiple
+        files can be added by specifying multiple -extra-css flags.
+  -extra-js value
+        Indicates the name of a JavaScript file to load from the web form. This
+        allows injecting custom behavior into the page. Multiple files can be
+        added by specifying multiple -extra-js flags.
+  -help
+        Print usage instructions and exit.
+  -import-path value
+        The path to a directory from which proto sources can be imported,
+        for use with -proto flags. Multiple import paths can be configured by
+        specifying multiple -import-path flags. Paths will be searched in the
+        order given. If no import paths are given, all files (including all
+        imports) must be provided as -proto flags, and grpcui will attempt to
+        resolve all import statements from the set of file names given.
+  -insecure
+        Skip server certificate and domain verification. (NOT SECURE!) Not
+        valid with -plaintext option.
+  -keepalive-time float
+        If present, the maximum idle time in seconds, after which a keepalive
+        probe is sent. If the connection remains idle and no keepalive response
+        is received for this same period then the connection is closed and the
+        operation fails.
+  -key string
+        File containing client private key, to present to the server. Not valid
+        with -plaintext option. Must also provide -cert option.
+  -max-msg-sz int
+        The maximum encoded size of a message that grpcui will accept. If not
+        specified, defaults to 4mb.
+  -max-time float
+        The maximum total time a single RPC invocation is allowed to take, in
+        seconds.
+  -method value
+        The methods to expose through the web UI. If no -service and no -method
+        flags are given, the web UI will expose *all* services and methods found
+        (either via server reflection or in the given proto source or protoset
+        files). If present, the methods exposed in the web UI include all
+        methods for services named in a -service flag plus all methods named in
+        a -method flag. Method names must be fully-qualified and may either use
+        a dot (".") or a slash ("/") to separate the fully-qualified service
+        name from the method's name.
+  -open-browser
+        When true, grpcui will try to open a browser pointed at the UI's URL.
+        This defaults to true when grpcui is used in an interactive mode; e.g.
+        when the tool detects that stdin is a terminal/tty. Otherwise, this
+        defaults to false.
+  -plaintext
+        Use plain-text HTTP/2 when connecting to server (no TLS).
+  -port int
+        The port on which the web UI is exposed.
+  -preserve-header value
+        Header names (no values) for request headers that should be preserved
+        when making requests to the gRPC server. May specify more than one via
+        multiple flags. In addition to the headers given in -H and -rpc-header
+        flags and metadata defined in the gRPC UI form, the gRPC server will also
+        get any of the named headers that the gRPC UI web server receives as HTTP
+        request headers. This can be useful if gRPC UI is behind an
+        authenticating proxy, for example, that adds JWTs to HTTP requests.
+        Having gRPC UI preserve these headers means that the JWTs will also be
+        sent to backend gRPC servers. These headers are only sent when RPCs are
+        invoked and are not included for reflection requests.
+  -proto value
+        The name of a proto source file. Source files given will be used to
+        determine the RPC schema instead of querying for it from the remote
+        server via the gRPC reflection API. May specify more than one via
+        multiple -proto flags. Imports will be resolved using the given
+        -import-path flags. Multiple proto files can be specified by specifying
+        multiple -proto flags. It is an error to use both -protoset and -proto
+        flags.
+  -protoset value
+        The name of a file containing an encoded FileDescriptorSet. This file's
+        contents will be used to determine the RPC schema instead of querying
+        for it from the remote server via the gRPC reflection API. May specify
+        more than one via multiple -protoset flags. It is an error to use both
+        -protoset and -proto flags.
+  -reflect-header value
+        Additional reflection headers in 'name: value' format. May specify more
+        than one via multiple flags. These headers will only be used during
+        reflection requests and will be excluded when invoking the requested RPC
+        method.
+  -rpc-header value
+        Additional RPC headers in 'name: value' format. May specify more than
+        one via multiple flags. These headers will *only* be used when invoking
+        the requested RPC method. They are excluded from reflection requests.
+        These headers are not shown in the gRPC UI form. If the user enters
+        conflicting metadata, the user-entered value will be ignored and only
+        the values present on the command-line will be used.
+  -servername string
+        Override server name when validating TLS certificate. This flag is
+        ignored if -plaintext or -insecure is used.
+        NOTE: Prefer -authority. This flag may be removed in the future. It is
+        an error to use both -authority and -servername (though this will be
+        permitted if they are both set to the same value, to increase backwards
+        compatibility with earlier releases that allowed both to be set).
+  -service value
+        The services to expose through the web UI. If no -service and no -method
+        flags are given, the web UI will expose *all* services and methods found
+        (either via server reflection or in the given proto source or protoset
+        files). If present, the methods exposed in the web UI include all
+        methods for services named in a -service flag plus all methods named in
+        a -method flag. Service names must be fully-qualified.
+  -unix
+        Indicates that the server address is the path to a Unix domain socket.
+  -use-reflection
+        When true, server reflection will be used to determine the RPC schema.
+        Defaults to true unless a -proto or -protoset option is provided. If
+        -use-reflection is used in combination with a -proto or -protoset flag,
+        the provided descriptor sources will be used in addition to server
+        reflection to resolve messages and extensions.
+  -v    Enable verbose output.
+  -version
+        Print version.
+  -vv
+        Enable *very* verbose output.
+  -vvv
+        Enable the most verbose output, which includes traces of all HTTP
+        requests and responses.
+```
+
+### 使用
+
+> grpcui -plaintext host:rpc服务端口
+
+```
+grpcui -plaintext localhost:9002
+```
+
+![](../static/images/grpcui01.jpg)

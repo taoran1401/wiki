@@ -287,34 +287,6 @@ func try(entry func()) {
 
 ## git submodule
 
-
-```
-mysql:
-wiki: 权限管理(0.5)(#)
-wiki: 索引(0.5)
-wiki: 锁(0.5)
-wiki: 事务(0.5)
-wiki: 调优(0.5)
-
-mongodb:
-wiki: 基础操作(0.5)(#)
-
-wiki: docker(1)(#)
-
-go:
-wiki: 区块链(5)
-wiki: go-zero(5)
-
-wiki:23设计模式(5)
-wiki:数据结构(6)
-wiki:网络协议(6)
-wiki:rabbitmq(1)
-
-mst:php,go(5)
-
-35
-```
-
 ```
 video(30)
 webnav-tango(web*2,go*1,test*1,deploy*1)(5)
@@ -331,7 +303,9 @@ A{
 }
 
 B{
-	mysql相关(常用的查询)
+	mysql相关(常用的查询)(#)
+	mysql分库分表，和对应查询统计
+	mysql分区
 	设计模式
 	数据结构和算法
 }
@@ -346,6 +320,71 @@ C{
 
 
 ```
-邮件代发
-短链接
+remind(自用,微服务实践， 需要提供对外api)
+vsp
 ```
+
+
+```
+
+待看：api部分源码分析 - 第十四节 52min
+待看：k8s服务发现部分 - 第二十三节 29min
+待看：rpc启动源码分析 - 第二十七节 27min 第二十八节 28min
+
+
+验证器
+模板
+
+
+protobuf    
+
+go-zero remind
+go-zero im
+
+//upstream
+//微服务
+//
+
+自动生成model的sh脚本
+rpc服务独立调试 - grpcui
+sql2pb工具根据数据库表生成proto文件
+
+{
+yaml文件中添加db配置
+service context中初始化db
+logic中使用
+}
+
+{
+	linux 用户权限控制，抓包调试
+}
+
+规范：
+文件命名： 小驼峰
+变量名：小驼峰
+测试文件命名： 下划线连接
+
+```
+
+```
+# goctl: rpc生成
+goctl rpc protoc remind.proto --go_out=/disk2/www/gogogo/rbl/go-rbl/app/remind/cmd/rpc --go-grpc_out=/disk2/www/gogogo/rbl/go-rbl/app/remind/cmd/rpc --zrpc_out=/disk2/www/gogogo/rbl/go-rbl/app/remind/cmd/rpc
+
+# goctl: api生成
+goctl api go -api desc/remind.api -dir .
+
+# 生成model
+goctl model mysql datasource -url="root:mysql1401@tcp(120.78.144.133:3306)/nav" -table="users" -c -dir .
+
+# grpcui
+grpcui -plaintext localhost:9002
+```
+
+
+go-zero
+```
+NewServiceGroup管理多个服务
+websocket
+```
+
+
