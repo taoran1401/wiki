@@ -1,10 +1,12 @@
-* 后端
+* 后端综合
   * [Golang](note/Golang.md)
   * [PHP](note/PHP.md)
   * [Git](note/Git.md)
   * [Docker](note/Docker.md)
   * [Lua](note/Lua.md)
   * [RabbitMQ](note/RabbitMQ.md)
+  * [Linux](note/Linux.md)
+  * [Nginx](note/Nginx.md)
 
 * 前端
   * [html/css](note/HtmlCss.md)
@@ -13,9 +15,9 @@
   <!-- * [ElementUI](note/#) -->
 
 * 数据库
-  * [Mysql](note/Mysql.md)
-  * [Redis](note/Redis.md)
-  * [MongoDB](note/MongoDB.md)
+  * [设计模式](note/DesignPatterns.md)
+  * [数据结构和算法](note/DataStructureAndAlgorithms.md)
+  * [网络协议](note/NetworkingProtocol.md)
   <!-- * ClickHouse -->
 
 * 程序员内功

@@ -1,9 +1,10 @@
 ```
 php spl迭代器
 php 使用psr
-php扩展
 php 内存管理和垃圾回收机制
   https://www.jb51.net/article/213549.htm
+vuex
+内存逃逸
 ```
 
 ## mysql: case when语法

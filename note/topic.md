@@ -119,7 +119,7 @@ PHP 中的许多预定义变量都是“超全局的”，这意味着它们在�
 
 ### 魔术方法
 
-\_\_construct()， \_\_destruct()， \_\_call()， \_\_callStatic()， \_\_get()， \_\_set()， \_\_isset()， \_\_unset()， \_\_sleep()， \_\_wakeup()， \_\_toString()， \_\_invoke() 等方法在 PHP 中被称为"魔术方法"（Magic methods）
+__construct()， __destruct()， __call()， __callStatic()， __get()， __set()， __isset()， __unset()， __sleep()， __wakeup()， __toString()， __invoke() 等方法在 PHP 中被称为"魔术方法"（Magic methods）
 
 ### public、protected、private、final 区别
 
@@ -129,11 +129,11 @@ PHP 5 新增了一个 final 关键字。如果父类中的方法被声明为 fin
 
 ### 客户端/服务端 IP 获取，了解代理透传 实际IP 的概念
 
-客户端IP: $\_SERVER['REMOTE_ADDR']
+客户端IP: $_SERVER['REMOTE_ADDR']
 
-服务端IP: $\_SERVER['SERVER_ADDR']
+服务端IP: $_SERVER['SERVER_ADDR']
 
-客户端IP(代理透传): $\_SERVER['HTTP_X_FORWARDED_FOR']
+客户端IP(代理透传): $_SERVER['HTTP_X_FORWARDED_FOR']
 
 ### 类的静态调用和实例化调用
 

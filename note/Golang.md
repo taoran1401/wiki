@@ -1848,6 +1848,72 @@ func validateVariable() {
 - |：使用多个约束，只需要满足其中一个，例如rgb|rgba；
 - required：字段必须设置，不能为默认值；
 
+## 翻译错误提示
+
+### 安装翻译的包
+
+> go get github.com/go-playground/universal-translator
+
+### 使用示例
+
+验证库结合翻译器本地化输出：
+```go
+package user
+
+import (
+	"github.com/go-playground/locales/zh"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	zh_tran "github.com/go-playground/validator/v10/translations/zh"
+	"github.com/pkg/errors"
+	"gorbl/app/common/result"
+	"gorbl/app/internal/logic/user"
+	"net/http"
+
+	"github.com/zeromicro/go-zero/rest/httpx"
+	"gorbl/app/internal/svc"
+	"gorbl/app/internal/types"
+)
+
+type SendPhoneCodeReq struct {
+	Phone string `json:"phone" validate:"required,len=11"`
+	Scene string `json:"scene" validate:"required"`
+}
+
+func SendPhoneCodeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req types.SendPhoneCodeReq
+		if err := httpx.Parse(r, &req); err != nil {
+			result.HttpResult(r, w, nil, err)
+			return
+		}
+
+		//翻译器
+		zh_ch := zh.New()
+		uni := ut.New(zh_ch)
+		trans, _ := uni.GetTranslator("zh")	//返回指定地区的翻译器
+
+		//参数校验
+		var validate *validator.Validate
+		validate = validator.New()
+		err := validate.Struct(&req)
+
+		//验证器注册翻译器
+		zh_tran.RegisterDefaultTranslations(validate, trans)
+		if err != nil {
+			for _, err := range err.(validator.ValidationErrors) {
+				//err.Translate(): 翻译err文本, 由validator提供
+				result.HttpResult(r, w, nil, errors.New(err.Translate(trans)))
+				return
+			}
+		}
+
+		result.HttpResult(r, w, resp, nil)
+		return
+	}
+}
+```
+
 ## protobuf
 
 ### 什么是protobuf
