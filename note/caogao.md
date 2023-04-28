@@ -147,97 +147,6 @@ echo '>>> 部署完成, 安全起见，请确认后手动启动服务'
 ```
 
 
-```mongodb
-db.getCollection("users").insert( {
-    _id: ObjectId("62c006c6608c6b37987dc973"),
-    username: "zhangsan",
-    tier: 10,
-		user_id: 1
-} );
-
-db.users.insertOne({
-	username: "ls1",
-	tier: 1,
-	user_id: 1
-})
-
-db.balance.insert([
-	{
-		user_id: 1,
-		balance: 10
-	},
-	{
-		user_id: 2,
-		balance: 10
-	},
-		{
-		user_id: 3,
-		balance: 10
-	},
-		{
-		user_id: 4,
-		balance: 10
-	},
-		{
-		user_id: 5,
-		balance: 10
-	},
-		{
-		user_id: 6,
-		balance: 10
-	},
-]);
-
-// 投影，limit,skip;  可以通过skip和limit实现分页效果
-db.users.find(
-	{"username": "name4"},
-	{"user_id": 1, "username": 1, "_id": 0}
-).skip(1).limit(1);
-
-// sort排序： 1升序，-1降序
-db.users.find(
-	{"username": "name4"},
-	{"user_id": 1, "username": 1, "_id": 0}
-).sort({"user_id": 1});
-
-
-//联表查询
-//$lookup
-//	from: 同一个数据库下等待被Join的集合
-//	localField: 源集合中的match值，如果输入的集合中，某文档没有 localField这个Key（Field），在处理的过程中，会默认为此文档含有 localField：null的键值对。
-//	foreignField: 待Join的集合的match值，如果待Join的集合中，文档没有foreignField值，在处理的过程中，会默认为此文档含有 foreignField：null的键值对。
-//	as: 为输出文档的新增值命名。如果输入的集合中已存在该值，则会覆盖掉
-db.users.aggregate([
-	{
-		$lookup: {
-			from: "balance",
-			localField: "user_id",
-			foreignField: "user_id",
-			as: "child"
-		}
-	}
-])
-
-//mapReduce
-
-//explain
-db.users.find(
-	{"username": "name4"},
-	{"user_id": 1, "username": 1, "_id": 0}
-).sort({"user_id": 1}).explain();
-```
-
-
-```sql
--- 连表时添加过滤条件
--- 比如A表和B表连表，B表的status = 0时B表数据才会被查询，否则为空 
-
--- 示例sql
-select a.id,b.id from A as a left join B as b on a.id = b.id and b.status = 0;
-```
-
-
-
 
 golang使用panic,recover实现错误捕获
 ```go
@@ -278,93 +187,14 @@ func try(entry func()) {
 }
 ```
 
-## sync
-
-## flag包
-
-## reflect反射
-
-## websocket
-
-## git submodule
-
 ```
-video(30)
-webnav-tango(web*2,go*1,test*1,deploy*1)(5)
-webnav-tango-zero(微服务版本)(本地开发版本)
+令牌桶限流
+高并发处理(百万级)模拟实践
 ```
-
-```
-A{
-	区块链
-	go-zero
-	go-zero微服务
-	网络协议
-	rabbitmq高级
-}
-
-B{
-	mysql相关(常用的查询)(#)
-	mysql分库分表，和对应查询统计
-	mysql分区
-	设计模式
-	数据结构和算法
-}
-
-C{
-	wiki: mst
-	wiki: mongo基础操作
-	令牌桶限流
-	高并发处理(百万级)模拟实践
-}
-```
-
 
 ```
 remind(自用,微服务实践， 需要提供对外api)
 vsp
-```
-
-
-```
-
-待看：api部分源码分析 - 第十四节 52min
-待看：k8s服务发现部分 - 第二十三节 29min
-待看：rpc启动源码分析 - 第二十七节 27min 第二十八节 28min
-
-
-验证器
-模板
-
-
-protobuf    
-
-go-zero remind
-go-zero im
-
-//upstream
-//微服务
-//
-
-自动生成model的sh脚本
-rpc服务独立调试 - grpcui
-sql2pb工具根据数据库表生成proto文件
-
-{
-yaml文件中添加db配置
-service context中初始化db
-logic中使用
-}
-
-{
-	linux 用户权限控制，抓包调试
-}
-
-规范：
-文件命名： 小驼峰
-变量名：小驼峰
-测试文件命名： 下划线连接
-
 ```
 
 ```
@@ -381,14 +211,9 @@ goctl model mysql datasource -url="root:mysql1401@tcp(120.78.144.133:3306)/nav" 
 grpcui -plaintext localhost:9002
 ```
 
+```
+l:1
+
 
 ```
-unsafe包，示例场景(struct转换byte)
-
-linux系统文本三剑客
-https://blog.csdn.net/qq_56999918/article/details/126806606
-
-linux
-```
-
 
