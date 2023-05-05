@@ -212,8 +212,6 @@ grpcui -plaintext localhost:9002
 ```
 
 ```
-l:1
-
-
+linux: tcpdump
 ```
 
