@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>Taoran笔记</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="keyword" content="全栈开发,学习笔记,vue,php,golang,go,网络协议,数据结构,微服务,分布式,高并发">
-  <meta name="description" content="全栈开发,学习笔记,vue,php,golang,go,网络协议,数据结构,微服务,分布式,高并发">
+  <meta name="keyword" content="全栈开发,学习笔记,vue,php,golang,go,网络协议,数据结构,微服务,分布式,高并发,taoran">
+  <meta name="description" content="全栈开发,学习笔记,vue,php,golang,go,网络协议,数据结构,微服务,分布式,高并发,taoran">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="./static/css/vue.css">
 </head>
@@ -24,27 +24,33 @@
       search: 'auto', // 默认值
       // search : [
       //   '/',            // => /README.md
+      //   '/note/',
       // ],
       // 完整配置参数
       search: {
         maxAge: 86400000, // 过期时间，单位毫秒，默认一天
-        paths: [], // or 'auto'
+        // paths: [], // or 'auto'
+        paths: 'auto', // or 'auto'
+        // paths: [
+        //   '/',
+        //   '/note/',
+        // ],
         placeholder: '默认',
 
         // 支持本地化
         placeholder: {
-          '/': '搜索'
+          '/': '搜索',
         },
 
         noData: '找不到结果!',
 
         // 支持本地化
         noData: {
-          '/': '找不到结果'
+          '/': '找不到结果',
         },
 
         // 搜索标题的最大层级, 1 - 6
-        depth: 2,
+        depth: 5,
 
         hideOtherSidebarContent: false, // 是否隐藏其他侧边栏内容
 
@@ -62,8 +68,9 @@
         // 您可以提供一个正则表达式来匹配前缀。在这种情况下，
         // 匹配到的字符串将被用来识别索引
         //pathNamespaces: /^(\/(zh-cn|ru-ru))?(\/(v1|v2))?/,
-        pathNamespaces: /^(\/(v1|v2))?/,
+        //pathNamespaces: /^(\/(v1|v2))?/,
 
+        // 字数统计
         count:{
           countable:true,
           fontsize:'0.9em',
@@ -77,5 +84,6 @@
   <script src="./static/js/docsify@4"></script>
   <script src="./static/js/search.min.js"></script>
   <script src="//unpkg.com/docsify-count/dist/countable.js"></script>
+  <script src="./static/js/zoom-image.min.js"></script>
 </body>
 </html>
