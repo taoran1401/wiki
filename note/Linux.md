@@ -207,7 +207,19 @@ bash    3484805 root  255u   CHR  136,1      0t0      4 /dev/pts/1
 ![](../static/images/ilnux_fd_001.png)
 
 
+## collect
 
+```
+// rsz内存
+// sork -k5nr; k: 按指定列排序； 5 表示第五列； n 按数值大小排序 r 倒序
+ps -e -o 'pid,comm,args,pcpu,rsz,vsz,stime,user,uid'| grep php | sort -k5nr
+
+// 获取内存占用前20的程序
+ps -aux| sort -k4nr | head -20
+
+// 获取大于300M的文件
+find / -size +300M|xargs du -sh
+```
 
 
 
