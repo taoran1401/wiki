@@ -7,6 +7,53 @@ vuex
 内存逃逸
 ```
 
+```
+base: [3.7 + 4.4 + 0.3] = 8.4
+
+without： 0.3
+
+base amount(6,7,8,9,10,11,12,1): sum(8) - (eat(1.8) + home(1.6) + life(0.2)) = 4.4
+
+openapi: 
+	login: 5 integral
+	checkin: 5 integral
+	invite: 10 integral
+
+
+period: 05.19 - 11.00
+step 1{
+	70vd+wiki/day:
+		work: 3h * 4
+		rest: 4h * 1
+	period: 4week
+	end: 6.17
+}
+
+step2{
+	exercise: 720 num(72/day)
+	period: 
+		first: 10
+		second: 5
+		third: 5
+	end: 6.27
+}
+
+step3{
+	practise + thesis
+	period: 
+		2/week * 8
+	end: 8.27
+}
+
+step4{
+	synthesize: exercise|thesis
+	end: 10.27
+}
+
+bz: 1.8
+
+```
+
 ## mysql: case when语法
 ```sql
 select 
@@ -193,8 +240,8 @@ func try(entry func()) {
 ```
 
 ```
-remind(自用,微服务实践， 需要提供对外api)
 vsp
+
 ```
 
 ```
@@ -217,6 +264,7 @@ linux: tcpdump
 网站安全和优化
 xss,doss,webshell,sql注入攻击防御
 
+死信队列
 ```
 
 
