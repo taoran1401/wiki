@@ -13,7 +13,7 @@
 
 ## 可靠性指标
 
-![](../../static/images/sraa_2.png)
+![](../../static/images/rk/sraa_2.png)
 
 - 平均无故障时间 一(MTTF) MTTF=1/，入为失效率
 - 平均故障修复时间 -(MTTR) MTTR=1/，μ为修复率
@@ -25,11 +25,11 @@
 
 ## 串联系统与并联系统
 
-![](../../static/images/sraa_3.png)
+![](../../static/images/rk/sraa_3.png)
 
 ## 混合系统
 
-![](../../static/images/sraa_4.png)
+![](../../static/images/rk/sraa_4.png)
 
 先计算并联再计算串联
 
@@ -51,7 +51,7 @@
 
 ### N版本程序设计
 
-![](../../static/images/sraa_7.png)
+![](../../static/images/rk/sraa_7.png)
 
 - 与通常软件开发过程不同的是，N版本程序设计增加了三个新的阶段:相异成份规范评审、相异性确认、背对背测试
 - N版本程序的同步、N版本程序之间的通信、表决算法( 全等表决、非精确表决Cosmetie表决 )、一致比较问题、数据相异性
@@ -92,7 +92,7 @@
 
 ### 双机容错
 
-![](../../static/images/sraa_10.png)
+![](../../static/images/rk/sraa_10.png)
 
 - 双机热备模式( 主系统、备用系统)
 - 双机互备模式( 同时提供不同的服务，心不跳则接管 )
@@ -106,3 +106,4 @@
 - 可管理性
 - 高性价比
 - 高透明性
+

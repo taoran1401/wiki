@@ -1,6 +1,6 @@
 ## 范围管理
 
-![](../../static/images/pm_1.png)
+![](../../static/images/rk/pm_1.png)
 
 > WBS: 工作分解结构
 
@@ -8,7 +8,7 @@
 
 时间管理：也叫进度管理； 就是采用科学的方法，确定进度目标，编制进度计划和资源供应计划，进行进度控制，在与质量、成本目标协调的基础上，实现工期目标。
 
-![](../../static/images/pm_2.png)
+![](../../static/images/rk/pm_2.png)
 
 三点估算法：(A + B * 4 + C) / 6
 - 估算的中间值(B)是大概率范围需要加权，这里加4倍权重
@@ -17,11 +17,11 @@
 
 ### 前导图法(单代号网络图, PDM)
 
-![](../../static/images/pm_3.png)
+![](../../static/images/rk/pm_3.png)
 
 ### 关键路径法
 
-![](../../static/images/pm_4.png)
+![](../../static/images/rk/pm_4.png)
 
 > 虚活动：即不占时间，也不占资源； 用于展现逻辑依赖关系
 
@@ -36,22 +36,22 @@
 
 ### 自由时差
 
-![](../../static/images/pm_5.png)
+![](../../static/images/rk/pm_5.png)
 
 ### 甘特图(Gantt)
 
-![](../../static/images/pm_6.png) 
+![](../../static/images/rk/pm_6.png) 
 
 - 优点: 甘特图直观、简单、容易制作，便于理解，能很清晰地标识出直到每一项任务的起始与结束时间，一般适用比较简单的小型项目，可用于WBS的任何层次、进度控制、资源优化、编制资源和费用计划。
 - 缺点:不能系统地表达一个项目所包含的各项工作之间的复杂关系，难以进行定量的计算和分析，以及计划的优化等.
 
 ## 成本管理
 
-![](../../static/images/pm_7.png) 
+![](../../static/images/rk/pm_7.png) 
 
 ## 挣值管理
 
-![](../../static/images/pm_8.png) 
+![](../../static/images/rk/pm_8.png) 
 
 
 ## 质量管理
@@ -81,7 +81,7 @@
 
 ### CMMI
 
-![](../../static/images/pm_9.png) 
+![](../../static/images/rk/pm_9.png) 
 
 ## 软件配置管理
 
@@ -108,11 +108,11 @@
 
 ### 变更控制
 
-![](../../static/images/pm_10.png) 
+![](../../static/images/rk/pm_10.png) 
 
 ### 版本控制
 
-![](../../static/images/pm_11.png) 
+![](../../static/images/rk/pm_11.png) 
 
 - 处于草稿状态的配置项的版本号格式为: 0.YZ，其中YZ数字范围为01~99。随着草稿的不断完善，YZ的取值应递增。YZ的初值和增幅由开发者自己把握。
 - 处于正式发布状态的配置项的版本号格式为:X.Y。其中X为主版本号，取值范围为1~ 9;Y为次版本号，取值范围为1 ~ 9。配置项第一次正式发布时，版本号为1.0。

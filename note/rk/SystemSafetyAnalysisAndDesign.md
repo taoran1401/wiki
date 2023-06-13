@@ -1,6 +1,6 @@
 ## 对称加密技术
 
-![](../../static/images/ssaad_1.png)
+![](../../static/images/rk/ssaad_1.png)
 
 缺陷:
 - 加密强度不高，但效率高。
@@ -17,9 +17,9 @@
 
 ## 非对称加密
 
-![](../../static/images/ssaad_2.png)
+![](../../static/images/rk/ssaad_2.png)
 
-![](../../static/images/ssaad_3.png)
+![](../../static/images/rk/ssaad_3.png)
 
 常见非对称密钥加密算法: 
 - RSA : 2048位(或1024位 )密钥、计算量极大、难破解
@@ -39,7 +39,7 @@
 
 ## 数字签名
 
-![](../../static/images/ssaad_5.png)
+![](../../static/images/rk/ssaad_5.png)
 
 ## 数字证书内容
 
@@ -53,19 +53,19 @@
 
 ## PKI公钥体系
 
-![](../../static/images/ssaad_8.png)
-![](../../static/images/ssaad_9.png)
+![](../../static/images/rk/ssaad_8.png)
+![](../../static/images/rk/ssaad_9.png)
 
 
 ## 网络安全
 
 ### 各个网络层次的安全保障
 
-![](../../static/images/ssaad_10.png)
+![](../../static/images/rk/ssaad_10.png)
 
 ### 网络威胁与攻击
 
-![](../../static/images/ssaad_11.png)
+![](../../static/images/rk/ssaad_11.png)
 
 - 被动攻击:收集信息为主，破坏保密性。
 - 主动攻击:主动攻击的类别主要有: 中断( 破坏可用性 )，篡改( 破坏完整性 ，造( 破坏真实性 )。
@@ -137,12 +137,12 @@
 
 ## 信息安全体系结构
 
-![](../../static/images/ssaad_15.png)
-![](../../static/images/ssaad_16 .png)
+![](../../static/images/rk/ssaad_15.png)
+![](../../static/images/rk/ssaad_16 .png)
 
 ## 综合练习
 
-![](../../static/images/ssaad_6.png)
+![](../../static/images/rk/ssaad_6.png)
 
 
 
