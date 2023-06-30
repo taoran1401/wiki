@@ -138,7 +138,8 @@
 ## 信息安全体系结构
 
 ![](../../static/images/rk/ssaad_15.png)
-![](../../static/images/rk/ssaad_16 .png)
+
+![](../../static/images/rk/ssaad_16.png)
 
 ## 综合练习
 

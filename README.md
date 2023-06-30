@@ -8,6 +8,7 @@
   * [Nginx](note/Nginx.md)
   * [设计模式](note/DesignPatterns.md)
   * [网络协议](note/NetworkingProtocol.md)
+  * [数据结构和算法](note/DataStructureAndAlgorithms.md)
 
 * 前端
   * [html/css](note/HtmlCss.md)

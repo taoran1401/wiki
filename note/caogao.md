@@ -241,7 +241,6 @@ func try(entry func()) {
 
 ```
 vsp
-
 ```
 
 ```
@@ -265,6 +264,28 @@ linux: tcpdump
 xss,doss,webshell,sql注入攻击防御
 
 死信队列
+```
+
+
+
+```
+0-4 = 5kb
+
+
+target: 20y(26week)(3400 coupon)
+now: 170 coupon
+
+2week/y:
+	ban: 3*10*200(0.6y)
+	other: 0.4y
+	costTime: 1h/day
+
+week/y
+	ban: 7*6*200(0.84y)
+	other: 0.2y
+	costTime: 2.2h/day
+
+仙林虚空/灵台仙境
 ```
 
 
