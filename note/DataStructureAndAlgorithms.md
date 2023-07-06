@@ -866,7 +866,7 @@ try {
 }
 ```
 
-### 树形结构
+### 树形结构(树)
 
 #### 概念
 
@@ -1289,23 +1289,906 @@ b: `WPL = 5 * 3 + 15 * 3 + 40 * 2 + 30 * 2 + 10 * 2 = 220`
 |二进制字符|01|1001|101|00|11|1000|
 
 我们将文字内容为“BADCADFEED”再次编码，对比可以看到结果串变小了
-- 原编码二进制串: 00100001101000010110010001   (共 30 个字符)
-- 新编码二进制串: 1001010010101001000111100    (共 25 个字符)
+- 原编码二进制串: 001000011010000011101100100011    (共 30 个字符)
+- 新编码二进制串: 1001010010101001000111100         (共 25 个字符)
 
 也就是说，我们的数据被压缩了，节约了大约17%的存储或传输成本。随着字符的增加和多字符权重的不同，这种压缩会更加显出其优势
 
-### 图形结构
+### 图形结构(图)
 
-图形结构：图形结构其实和运筹学中的图是一样的，都是一堆多的关系。
+在线性表中，数据元素之间是被串起来的，仅有线性关系，每个数据元素只有一个直接前驱和一个直接后继。在树形结构中，数据元素之间有着明显的层次关系，并且每一层上的数据元素可能和下一层中多个元素相关，但只能和上一层中一个元素相关。图是一种较线性表和树更加复杂的数据结构。在图形结构中，结点之间的关系可以是任意的，图中任意两个数据元素之间都可能相关。
 
 ![](../static/images/sjjg_3.webp)
 
-### 集合结构
 
-集合结构: 集合结构中，元素之间没有任何关系，它们仅仅是属于一个集合
+图(Graph)是由顶点的有穷非空集合V(G)和顶点之间边的集合E(G)组成，通常表示为: `G=(V, E)`，其中，G表示个图，V是图G中顶点的集合，E是图G中边的集合。若`V={v1,v2,...,vn}`，则用`∣V∣`表示图G中顶点的个数，也称图G的阶，`E={(u,v)∣u ∈ V,v ∈ V}`，用∣E∣表示图G中边的条数。
 
-![](../static/images/sjjg_1.webp)
+> 线性表中我们把数据元素叫元素，树中将数据元素叫结点，在图中数据元素，我们则称之为顶点(Vertex)
+
+> 注意:线性表可以是空表，树可以是空树，但图不可以是空图。就是说，图中不能一个顶点也没有，图的顶点集V一定非空，但边集E可以为空，此时图中只有顶点而没有边。
+
+#### 各种定义
+
+- 无向图
+
+无向边：若顶点v<sub>i</sub>到v<sub>j</sub>之间的边没有方向，则称这条边为无向边(Edge);用无序偶对(v<sub>i</sub>, v<sub>j</sub>)来表示。
+
+无向图(Undirected graphs)：如果图中任意两个顶点之间的边都是无向边，则称该图为无向图。
+
+图示：
+
+![](../static/images/sjjg_38.png)
+
+上面的无向图G<sub>1</sub>来说，G<sub>1</sub>=(V<sub>1</sub>, {E<sub>1</sub>}), 其中顶点集合V<sub>1</sub>={A,B,C,D}; 边集合E<sub>1</sub>={(A,B), (B,C), (C,D), (D,A), (A,C)}
+
+##### 有向图
+
+有向边： 若从顶点v<sub>i</sub>到v<sub>j</sub>的边有方向，则称这条边为有向边，也称为弧(Arc)； 用有序偶<v<sub>i</sub>,  v<sub>j</sub>>来表示，v<sub>i</sub>称为弧尾， v<sub>j</sub>称为弧头。
+
+有向图： 如果图中任意俩个顶点之间的边都是有向边，则称改图为有向图(Directed graphs)
+
+图示：
+
+![](../static/images/sjjg_39.png)
+
+连接顶点A到D的有向边就是弧，A是弧尾，D是弧头，<A, D>表示弧，注意不能写成<D, A>
+
+对于上面的有向图G<sub>2</sub>来说， G<sub>2</sub>=(V<sub>2</sub>,{E<sub>2</sub>}), 其中顶点集合V<sub>2</sub>={A,B,C,D};弧集合E<sub>2</sub>={<A,D>, <B,A>, <C,A>, <B,C>}
+
+##### 简单图
+
+简单图：若不存在订单到其自身的边，且同一条边不重复出现，则称这样的图为简单图
+
+##### 无向完全图
+
+在无向图中，如果任意两个顶点之间都存在边，则称该图为无向完全图
+
+图示：
+
+![](../static/images/sjjg_40.png)
+
+##### 有向完全图
+
+在有向图中，如果任意两个顶点之间都存在方向互为相反的两条弧，则称该图为有向完全图
+
+图示：
+
+![](../static/images/sjjg_41.png)
+
+##### 稠密图、稀疏图
+
+有很少条边或弧的图标称为稀疏图，反之称为稠密图；这里的稀疏和稠密是相对的；
+
+##### 权和网
+
+权(Weight)： 在一个图中边或弧具有与它相关的数字，这种与图的边或弧相关的数叫做权
+
+网(Network)： 这种带权的图通常称为网;
+
+图示：
+
+![](../static/images/sjjg_42.png)
+
+##### 子图
+
+假设有两个图`G=(V,{E})`和 G<sup>'</sup>=(V<sup>'</sup>, {E<sup>'</sup>}) ,如果 V<sup>'</sup> 是V的子集，且 E<sup>'</sup> 是E的子集，则称G<sup>'</sup>是G的子图。若有满足 V(G<sup>'</sup>) = V(G) 的子图G<sup>'</sup>, 则称其为G的生成子图。
+
+![](../static/images/sjjg_43.png)
+
+##### 顶点与边间关系
+
+- 对于无向图`G=(V,{E})`，如果边 (v,v<sup>'</sup>) ∈ E , 这称顶点v和v<sup>'</sup>互为邻接点, 即v和v<sup>'</sup>相邻接；边(v, v<sup>'</sup>)依附于顶点v和v<sup>'</sup>。顶点v的度是和v相关联的边的数目，记为TD(v);
+
+- 对于有向图`G=(V,{E})`， 如果弧 <v,v<sup>'</sup>> ∈ E, 则称顶点v邻接到顶点v<sup>'</sup>, 顶点v<sup>'</sup>邻接自顶点v。弧 <v, v<sup>'</sup>> 和顶点v, v<sup>'</sup>相关联。以顶点v为头的弧数目称为v的入度(InDegree), 记为ID(v)； 以v为尾的弧数目称为v的出度(OutDegree), 记为OD(v)；顶点v的度为`TD(v) = ID(v) + OD(v)`
+
+##### 连通图、连通分量
+
+- 连通图和非连通图：在无向图中，若从顶点v到顶点w有路径存在，则称v和w是连通的。若图G中任意两个顶点都是连通的，则称图G为连通图，否则称为非连通图
+
+连通图：
+
+![](../static/images/sjjg_44.png)
+
+- 连通分量：无向图中的极大连通子图称为连通分量
+    - 要是子图
+    - 子图要连通的
+    - 连通子图含有极大定点数
+    - 具有极大顶点数的连通子图包含依附于这些顶点的所有边
+
+图示：
+
+![](../static/images/sjjg_45.png)
+
+![](../static/images/sjjg_46.png)
+
+图1 是一个无向非连通图。但是它有两个连通分量，即图2和图3; 而图4，尽管是图1的子图，但是它却不满足连通子图的极大顶点数(图2满足)。因此它不是图1的无向图的连通分量。
+
+##### 强连通图、强连通分量
+
+强连通: 在有向图中，若从顶点v到顶点w和从顶点w到项点v之间都有路径,则称这两个顶点是强连通的。
+
+强连通图: 若图中任何一对顶点都是强连通的，则称此图为强连通图。
+
+强连通分量: 有向图中的极大强连通子图称为有向图的强连通分量
+
+> 注意： 强连通图、强连通分量只是针对有向图而言
+
+图G<sub>1</sub>的强连通分量如下图所示：
+
+![](../static/images/sjjg_47.png)
+
+##### 生成树、生成森林
+
+生成树： 连通图的生成树是一个极小的连通子图，它含有图中全部的n个顶点，但只有足以构成一棵树的n-1条边；对生成树而言，若砍去它的一条边，则会变成非连通图，若加上一条边则会形成一个回路. 在非连通图中，连通分量的生成树构成了非连通图的生成森林
+
+![](../static/images/sjjg_48.png)
+
+- 图1是一个普通图，但不是生成树
+- 当去掉2条构成循环的边后，如图2，图3，随便加哪两定点的边都将构成环
+- 图4不是连通图
+
+##### 路径、路径长度、回路
+
+顶点v<sub>p</sub>到顶点v<sub>q</sub>之间的一条路径是指顶点序列v<sub>p</sub>, v<sub>i1</sub>, v<sub>i2</sub>, ..., v<sub>im</sub>, v<sub>q</sub>，当然关联的边也可以理解为路径的构成要素。路径上边的数目称为路径长度。第一个顶点和最后一个顶点相同的路径称为回路或环。若一个图有n个顶点，并且有大于n−1条边，则此图一定有环
+
+##### 简单路径、简单回路
+
+在路径序列中，顶点不重复出现的路径称为简单路径。除第一个顶点和最后一个顶点外，其余顶点不重复出现的回路称为简单回路。
+
+##### 距离
+
+从顶点u出发到顶点v的最短路径若存在，则此路径的长度称为从u到v的距离。若从u到v根本不存在路径，则记该距离为无穷(∞)。
+
+##### 有向树
+
+一个顶点的入度为0、其余顶点的入度均为1的有向图，称为有向树。
+
+### 排序
+
+#### 冒泡排序
+
+冒泡排序 (Bubble Sort)一种交换排序，它的基本思想是: 两两比较相邻记录的关键字，如果反序则交换，直到没有反序的记录为止
+
+一张图说明：
+
+![](../static/images/sjjg_maopao1.gif)
+
+代码：
+```php
+<?php
+
+/**
+ * 冒泡排序
+ *
+ * @param array $data
+ * @return array
+ */
+function bubbling(array &$data)
+{
+    $n = count($data);
+    //进行n-1轮迭代
+    for ($i = $n - 1; $i > 0; $i--) {
+        //标记在一轮中有没有进行过交换
+        $flag = false;
+        for ($j = 0; $j < $i; $j++) {
+            //比较前后元素的大小，如果前面元素小于后面元素那么交换两个的值
+            if ($data[$j] > $data[$j+1]) {
+                $tmp = $data[$j];
+                $data[$j] = $data[$j+1];
+                $data[$j+1] = $tmp;
+                //这一轮中发生过交换，标记记为true
+                $flag = true;
+            }
+        }
+        //如果这一轮中没有进行过交换，说明已经没有需要排序的项
+        if (!$flag) {
+            return true;
+        }
+    }
+}
+
+$data = [5, 9, 1, 6, 8, 14, 6, 49, 25, 4, 6, 3];
+//$data = [2, 1, 3, 4, 5, 6, 7];
+bubbling($data);
+print_r($data);
+```
+
+> 时间复杂度：O(n<sup>2</sup>)
+
+
+#### 选择排序
+
+简单选择排序法(simple Selection Sort) 就是通过 n-i 次关键字间的比较，从n-i+1 个记录中选出关键字最小的记录，并和第i(1<i<n)个记录交换之.
+
+通过选择最小的元素，每轮迭代只需交换一次。虽然交换次数比冒泡少很多，但效率和冒泡排序一样的糟糕。
+
+一图说明：
+
+![](../static/images/sjjg_select1.gif)
+
+代码：
+```php
+<?php
+/**
+ * 选择排序
+ *
+ * @param array $data
+ */
+function select(array &$data)
+{
+    $n = count($data);
+    //进行n-1轮迭代
+    for ($i = 0; $i <= $n - 1; $i++) {
+        //记录最小数和下标
+        $min = $data[$i];
+        $minIndex = $i;
+        for ($j = $i + 1; $j < $n; $j++) {
+            //判断下一个元素是否最小数
+            if ($data[$j] < $min) {
+                //记录最小数和下标
+                $min = $data[$j];
+                $minIndex = $j;
+            }
+        }
+
+        //一轮结束，判断是否有新的最小数，有则交换最小数
+        if ($i != $minIndex) {
+            $data[$minIndex] = $data[$i];
+            $data[$i] = $min;
+        }
+    }
+}
+
+$data = [5, 9, 1, 6, 8, 14, 6, 49, 25, 4, 6, 3];
+//$data = [2, 1, 3, 4, 5, 6, 7];
+select($data);
+print_r($data);
+```
+
+> 时间复杂度： O(n<sup>2</sup>)
+
+#### 归并排序
+
+归并排序是一种分治策略的排序算法。它是一种比较特殊的排序算法，通过递归地先使每个子序列有序，再将两个有序的序列进行合并成一个有序的序列。
+
+一图说明：
+
+![](../static/images/sjjg_gb1.png)
+
+代码：
+```php
+<?php
+/**
+ * 归并排序
+ *
+ * @param array $data
+ * @return array
+ */
+function mergeSort(array $data)
+{
+    $n = count($data);
+    if ($n <= 1) {
+        //已经排序完毕直接返回
+        return $data;
+    }
+    //计算中间索引
+    $midIndex = floor($n / 2);
+    //分割左右数组
+    $left = array_slice($data, 0, $midIndex);
+    $right = array_slice($data, $midIndex, $n);
+    //切分归并
+    return merge(mergeSort($left), mergeSort($right));
+}
+
+function merge($left, $right)
+{
+    //结果存放数组
+    $result = [];
+    while (count($left) > 0 && count($right) > 0) {
+        //比较两边第一个元素，小的放入元素放入结果数组
+        if ($left[0] < $right[0]) {
+            $result[] = array_shift($left);
+        } else {
+            $result[] =  array_shift($right);
+        }
+    }
+
+    //如果左边数组还有剩余追加到结果数组
+    if (count($left) > 0) {
+        $result  = array_merge($result, $left);
+    }
+
+    //如果右边数组还有剩余追加到结果数组
+    if (count($right) > 0) {
+        $result  = array_merge($result, $right);
+    }
+
+    return $result;
+}
+
+//test
+$data = [50, 10, 90, 30, 70, 40, 80, 60, 20];
+var_dump(mergeSort($data));
+```
+
+> 时间复杂度：O(nlogn)，这个时间复杂度是稳定的，不随需要排序的序列不同而产生波动
+
+#### 堆排序
+
+堆(Heap): 堆是具有以下特性的完全二叉树;
+- 最小堆(大顶堆)：每个结点的值都小于或等于其左右孩子结点的值
+- 最大堆(小顶堆)：每个结点的值都大于或等于其左右孩子结点的值
+
+> 注意：这里的堆并不是堆栈的那个堆
+
+堆排序(Heap Sort): 就是利用堆(假设利用大顶堆) 进行排序的方法。它的基本思想是，将待排序的序列构造成一个大顶堆。此时，整个序列的最大值就是堆顶的根结点。将它移走(其实就是将其与堆数组的末尾元素交换，此时末尾元素就是最大值)，然后将剩余的 n-1 个序列重新构造成一个堆，这样就会得到 n 个元素中的次小值。如此反复执行，便能得到一个有序序列了。
+
+需要用到的完全二叉树特性， 详细见[二叉树特性](/note/DataStructureAndAlgorithms?id=二叉树特性)：
+- 如果一个有 n 个结点的完全二叉树从上到下，从左到右依次编号，则对任意结点有
+    - 若 i=1，则结点i是二叉树的根，无双亲，如果i>1,则其双亲是i/2向下取整。
+    - 如果 2i>n，则结点i无左孩子，否则其左孩子是结点2i。
+    - 如果 2i+1>n，则结点i无右孩子，否则其右孩子是结点2i+1.
+
+算法步骤：
+- 创建堆(堆排序求升序用大顶堆，求降序用小顶堆)
+- 把堆首和堆尾互换
+- 
+
+代码：
+```php
+
+```
+
+> 时间复杂度： 平均情况O(nlog2n), 不稳定排序
+
+
+#### 快速排序
+
+快速排序 (Quick Sort) 的基本思想是: 通过一趟排序将待排记录分割成独立的两部分，其中一部分记录的关键字均比另一部分记录的关键字小，则可分别对这两部分记录继续进行排序，以达到整个序列有序的目的。
+
+以图说明：
+
+![](../static/images/sjjg_quick1.gif)
+
+步骤如下：
+- 先从数列中取出一个数作为基准数。一般取第一个数。
+- 分区过程，将比这个数大的数全放到它的右边，小于或等于它的数全放到它的左边。
+- 再对左右区间重复第二步，直到各区间只有一个数。
+
+代码：
+```php
+<?php
+/**
+ * 快速排序
+ *
+ * @param array $data
+ */
+function quick(array $data)
+{
+    $n = count($data);
+    if ($n <= 1) {
+        return $data;
+    }
+
+    //计算中间索引
+    $midIndex = floor($n / 2);
+    //中间值
+    $mid = $data[$midIndex];
+    $left = [];
+    $right = [];
+    for ($i = 0; $i < $n; $i++) {
+        //跳过中间索引
+        if ($midIndex == $i) {
+            continue;
+        }
+
+        //小于等于中间值的放到左侧
+        if ($data[$i] <= $mid) {
+            $left[] = $data[$i];
+        }
+
+        //大于中间值的放到右侧
+        if ($data[$i] > $mid) {
+            $right[] = $data[$i];
+        }
+    }
+    //递归
+    return array_merge(quick($left), [$mid], quick($right));
+}
+
+$data = [5, 9, 1, 6, 8, 14, 6, 49, 25, 4, 6, 3];
+var_dump(quick($data));
+```
+
+> 时间复杂度：平均`O(nlogn)`
+
+### 查找
+
+#### 有序表查找
+
+##### 二分查找/折半查找
+
+折半查找(Binary Search) 技术，又称为二分查找。折半查找的基本思想是:在有序表中，取中间记录作为比较对象，若给定值与中间记录的关键字相等，则查找成功，若给定值小于中间记录的关键字，则在中间记录的左半区继续查找，若给定值大于中间记录的关键字，则在中间记录的右半区继续查找。不断重复上述过程，直到查找成功，或所有查找区域无记录，查找失败为止
+
+实现思路，简单来说就是：以数组中某个值为界，再递归进行查找，直到结束
+
+代码：
+```php
+<?php
+/**
+ * 折半查找/二分查找
+ */
+function binary(array $data, int $low, int $high, int $key)
+{
+    if ($low >  $high) {
+        return -1;
+    }
+    //中间值索引
+    $mid = intval(($low + $high) / 2);
+    if ($key < $data[$mid]) {
+        //大于查找值
+        return binary($data, $low, $mid - 1, $key);
+    } else if ($key > $data[$mid]) {
+        //小于查找值
+        return binary($data, $mid + 1, $high, $key);
+    } else {
+        //找到查找值
+        return $mid;
+    }
+}
+
+//test
+//二分查找要求线性表必须采用顺序存储结构
+//$data = [50, 10, 90, 30, 70, 40, 80, 60, 20]; //错误结构
+$data = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+var_dump(binary($data, 0, count($data), 70));
+```
+
+> 时间复杂度：O(logn) ，每次查找缩小一半的查找范围
+
+##### 插值查找
+
+插值查找，有序表的一种查找方式。插值查找是根据查找关键字与查找表中最大最小记录关键字比较后的查找方法。插值查找基于二分查找，将查找点的选择改进为自适应选择，提高查找效率。
+
+打个比方，在英文词典里查`apple`, 下意识里翻开的是靠前面的书页，如果查找`zoo`那么会下意识的在考后的书页查找。
+
+核心点在于插值的计算公式：
+
+```
+mid = low + (key - a[low]) / (a[high] - a[low]) * (high - low)
+```
+
+代码：
+```php
+<?php
+/**
+ * 插值查找
+ */
+function interpolation(array $data, int $low, int $high, int $key)
+{
+    if ($low >  $high) {
+        return -1;
+    }
+    //中间值索引
+    $mid = intval($low + ($key - $data[$low]) / ($data[$high] - $data[$low]) * ($high - $low));
+    if ($key < $data[$mid]) {
+        //大于查找值
+        return interpolation($data, $low, $mid - 1, $key);
+    } else if ($key > $data[$mid]) {
+        //小于查找值
+        return interpolation($data, $mid + 1, $high, $key);
+    } else {
+        //找到查找值
+        return $mid;
+    }
+}
+
+//test
+$data = [10, 20, 30, 40, 50, 60, 70, 80, 90, 91, 101, 110, 129];
+var_dump(interpolation($data, 0, count($data) - 1, 11));
+```
+
+> 时间复杂度：O(logn); 对于有序表比较长，而关键字分布有比较均匀的查找表来说，插值查找算法的平均性能比二分查找好的多
+
+##### 斐波拉契查找
+
+斐波拉契查找(Fibonacci Search): 利用黄金分割原理来实现； 核心公式为`F(n) = F(n-1) + F(n-2)`即从第三项开始，每一项可以分割为前一项和前两项之和，而前一项与当前项的比值接近0.618，该比例称为黄金分割比例，斐波那契查找算法的核心思想就是将数组按照黄金分割比例进行查找划分
+
+代码：
+```php
+<?php
+
+/**
+ * 斐波那契查找
+ */
+function fibonacciSearch(array $data, $key)
+{
+    $n = count($data);
+    //定义最低下标记录首位
+    $low = 0;
+    //定义最高下标记录末位
+    $high = $n - 1;
+
+    $k = 0;
+    //计算n位于斐波那契数列的位置
+    while ($n > fibonacci($k) - 1) {
+        $k++;
+    }
+
+    //将不满的数值的补全
+    for ($j = $n; $j < fibonacci($k) - 1; $j++) {
+        $data[$j] = $data[$n - 1];
+    }
+
+    //查找
+    while ($low <= $high) {
+        //echo "---" . PHP_EOL;
+        //计算当前分隔的下标
+        $mid = $low + fibonacci($k - 1) - 1;
+        //echo '$k = ' . $k . PHP_EOL;
+        if ($key < $data[$mid]) {
+            //echo "$key < $data[$mid]" . PHP_EOL;
+            $high = $mid - 1;
+            $k = $k - 1;
+            //echo '$high 和 $k 和 $mid' . " $high, $k, $mid" . PHP_EOL;
+        } else if ($key > $data[$mid]) {
+            //echo "$key > $data[$mid]" . PHP_EOL;
+            $low = $mid + 1;
+            $k = $k - 2;
+            //echo '$high 和 $k 和 $mid' . " $high, $k, $mid" . PHP_EOL;
+        } else {
+            if ($mid <= $n) {
+                //找到元素位置
+                return $mid;
+            } else {
+                //说明是补全的数值，补全的数值和n相同，那么直接返回n
+                return $n;
+            }
+        }
+    }
+}
+
+/**
+ * 构建斐波那契数列
+ */
+function fibonacci($i)
+{
+    if ($i < 2) {
+        $value = $i == 0 ? 0 : 1;
+    } else {
+        $value = fibonacci($i - 1) + fibonacci($i - 2);
+    }
+    return $value;
+}
+
+//test
+$data = [0, 1, 16, 24, 35, 47, 59, 62, 73, 88, 99];
+var_dump(fibonacciSearch($data, 73));
+```
+
+> 时间复杂度：O(logn)
+
+#### 树表查找
+
+##### 二叉排序树
+
+二叉排序树(Binary Sort Tree), 又称为二叉查找树。它或者是一颗空树忙或者是具有下列性质的二叉树。
+- 若它的左子树不空，则左子树上所有结点的值均小于它的根结构的值
+- 若它的右子树不空，则右子树上所有结点的值均大于它的根结点的值
+- 它的左、右子树也分别为二叉排序树
+
+构造一颗二叉排序树的目的，其实并不是为了排序，而是为了提高查找和插入删除关键字的速度
+
+查找过程：当二叉排序树不为空时，首先将给定值和根结点进行比较，若相等，则查找成功；若小于根结点，则在左子树上继续查找；若大于根结点，则在右子树上继续查找。
+
+代码：
+```php
+<?php
+/**
+ * 二叉排序树/二叉查找树
+ */
+
+/**
+ * 结点
+ *
+ * Class Node
+ */
+class Node
+{
+    public $left = null;
+    public $right = null;
+    public $data;
+    public function __construct($data)
+    {
+        $this->data = $data;
+    }
+}
+
+/**
+ * Class SearchTree
+ */
+class SearchTree
+{
+    /**
+     * 添加
+     *
+     * @param Node $tree
+     * @param $value
+     * @return bool|void
+     */
+    public function add(Node $tree, $value)
+    {
+        if (is_null($tree)) {
+            return false;
+        }
+
+        $newNode = new Node($value);
+        while ($tree != null) {
+            if ($newNode->data < $tree->data) {
+                //插入值比根结点值小
+                if ($tree->left === null) {
+                    //左子树为空， 可以插入
+                    $tree->left = $newNode;
+                    return true;
+                }
+                //左子树有结点，不能直接插入，把该节点设置根结点继续判断
+                $tree = $tree->left;
+            } else {
+                //插入值大于等于根结点值
+                if ($tree->right === null) {
+                    //右子树为空， 可以插入
+                    $tree->right = $newNode;
+                    return true;
+                }
+                //右子树有结点，不能直接插入，把该节点设置根结点继续判断
+                $tree = $tree->right;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 删除
+     *
+     * 1. 当删除的结点没有子结点时，只需要将父结点中指向删除结点的指针设为null
+     * 2. 当删除的结点只有一个结点时，只需要更新父结点中指向删除结点的指针指向要删除结点的子节点
+     * 3. 当删除的结点有两个节点时：需要找到这个结点的右子树中最小结点，把它替换到要删除的结点上，然后再删除这个最小结点
+     *  3.1: 为什么是右子树的最小结点，因为右子树的最小结点满足左子树上所有结点值均小于它，而右子树上所有结点值均大于它； 符合二叉排序树的性质
+     *  3.2: 反之，找右子树的最大结点
+     *
+     *
+     * @param Node $tree
+     * @param $value
+     * @param null $flag    标记是进入左子树还是右子树
+     * @return bool
+     */
+    public function delete(Node &$tree, $value, $flag = null)
+    {
+        if (is_null($tree)) {
+            return false;
+        }
+        if ($value > $tree->data) {
+            //进入右子树查找
+            $this->delete($tree->right, $value, 'right');
+        } else if ($value < $tree->data) {
+            //进入左子树查找
+            $this->delete($tree->left, $value, 'left');
+        } else {
+            //找到并删除
+            if ($tree->left === null) {
+                //左子树为空时，只需要重新接它的右子树
+                $tree = $tree->right;
+            } else if ($tree->right === null) {
+                //右子树为空时，只需要重新接它的左子树
+                $tree = $tree->left;
+            } else {
+                //左右子树不为空，找到右子树的最左结点(即右子树的最小结点)
+                if ($flag == 'left') {
+                    //找到左子树的最右结点(即左子树的最大结点)
+                    $delNode = $tree->right;
+                    while (!is_null($delNode->right)) {
+                        $delNode = $delNode->right;
+                    }
+                    //删除已经替换的结点
+                    $tree->right = null;
+                } else if ($flag == 'right') {
+                    //找到右子树的最左结点(即右子树的最小结点)
+                    $delNode = $tree->left;
+                    while (!is_null($delNode->left)) {
+                        $delNode = $delNode->left;
+                    }
+                    //删除已经替换的结点
+                    $tree->left = null;
+                } else {
+                    return false;
+                }
+                $tree->data = $delNode->data;
+            }
+        }
+        return true;
+    }
+}
+```
+
+构建二叉排序树：
+```php
+//test
+$tree = New Node(62);
+
+$sn = New SearchTree();
+$sn->add($tree,58);
+$sn->add($tree, 88);
+$sn->add($tree, 47);
+$sn->add($tree, 73);
+$sn->add($tree, 99);
+$sn->add($tree, 35);
+$sn->add($tree, 51);
+$sn->add($tree, 93);
+$sn->add($tree, 37);
+
+print_r($tree);    //打印对象查看结构是否正确
+/*
+结果如下：
+Node Object
+(
+    [left] => Node Object
+        (
+            [left] => Node Object
+                (
+                    [left] => Node Object
+                        (
+                            [left] =>
+                            [right] => Node Object
+                                (
+                                    [left] =>
+                                    [right] =>
+                                    [data] => 37
+                                )
+
+                            [data] => 35
+                        )
+
+                    [right] => Node Object
+                        (
+                            [left] =>
+                            [right] =>
+                            [data] => 51
+                        )
+
+                    [data] => 47
+                )
+
+            [right] =>
+            [data] => 58
+        )
+
+    [right] => Node Object
+        (
+            [left] => Node Object
+                (
+                    [left] =>
+                    [right] =>
+                    [data] => 73
+                )
+
+            [right] => Node Object
+                (
+                    [left] => Node Object
+                        (
+                            [left] =>
+                            [right] =>
+                            [data] => 93
+                        )
+
+                    [right] =>
+                    [data] => 99
+                )
+
+            [data] => 88
+        )
+
+    [data] => 62
+)
+*/
+```
+
+对应图：
+
+![](../static/images/sjjg_52.png)
+
+
+删除值为88的元素：
+```php
+//删除元素
+$sn->delete($tree, 47);
+// $sn->delete($tree, 88);
+
+//再次打印结果,查看结构
+print_r($tree);
+
+//结果：
+/*
+Node Object
+(
+    [left] => Node Object
+        (
+            [left] => Node Object
+                (
+                    [left] => Node Object
+                        (
+                            [left] =>
+                            [right] => Node Object
+                                (
+                                    [left] =>
+                                    [right] =>
+                                    [data] => 37
+                                )
+
+                            [data] => 35
+                        )
+
+                    [right] => Node Object
+                        (
+                            [left] =>
+                            [right] =>
+                            [data] => 51
+                        )
+
+                    [data] => 47
+                )
+
+            [right] =>
+            [data] => 58
+        )
+
+    [right] => Node Object
+        (
+            [left] =>
+            [right] => Node Object
+                (
+                    [left] => Node Object
+                        (
+                            [left] =>
+                            [right] =>
+                            [data] => 93
+                        )
+
+                    [right] =>
+                    [data] => 99
+                )
+
+            [data] => 73
+        )
+
+    [data] => 62
+)
+*/
+```
+
+对应图：
+
+![](../static/images/sjjg_54.png)
+
+
+> 时间复杂度：
+
+##### 平衡二叉树(AVL数)
+
+##### 多路查找树(B树)
+
+##### B+树
+
+##### 红黑树
+
+#### 散列表查找(哈希查找)
 
 
 
-<!-- redis集合的数据结构：跳表 -->
+
+<!-- 
+redis集合的数据结构：跳表
+红黑树
+b-tree
+b+-tree
+top k 问题（堆排序可以求）
+-->
