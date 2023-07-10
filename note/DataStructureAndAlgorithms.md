@@ -2169,10 +2169,477 @@ Node Object
 
 ![](../static/images/sjjg_54.png)
 
-
-> 时间复杂度：
+> 时间复杂度：二叉排序树比较平衡时为O(logn)， 不平衡的最坏情况为O(n)
 
 ##### 平衡二叉树(AVL数)
+
+平衡二叉树（Balanced Binary Tree）又称 AVL 树，具有下列性质：
+    - 他是一颗二叉查找树
+    - 任意一个结点的左右子树的高度差的绝对值不超过1
+
+平衡因子(BF, Balance Factor): 二叉树上结点的左子树深度减去右子树深度的值称为平衡因子
+
+平衡二叉树上所有结点的平衡因子只可能是 -1，0，1。只要树上有结点的平衡因子的绝对值大于 1，则该二叉树就是不平衡的
+
+![](../static/images/sjjg_55.png)
+
+最小不平衡子树： 距离插入结点最近的，且平衡因子的绝对值大于 1 的结点为根的子树，我们称为最小不平衡子树。
+
+图示：
+
+![](../static/images/sjjg_56.png)
+
+实现原理：
+
+平衡二叉树构建的基本思想就是在构建二叉排序树的过程中，每当插入一个结点时，先检查是否因插入而破坏了树的平衡性，若是，则找出最小不平衡子树。在保持二叉排序树特性的前提下，调整最小不平衡子树中各结点之间的链接关系，进行相应的旋转，使之成为新的平衡子树。
+
+> 时间复杂度：稳定在O(logn)
+
+###### AVL添加元素
+
+添加元素前需要定位到元素的位置，也就是使用二分查找找到该元素需要插入的地方。
+
+插入后，需要满足所有节点的平衡因子在 [-1，0，1] 范围内，如果不在，需要进行旋转调整。
+
+旋转有四种情况：
+- 左左情况：在左子树上插上左儿子导致失衡，右旋，转一次。
+- 右右情况：在右子树上插上右儿子导致失衡，左旋，转一次。
+- 左右情况：在左子树上插上右儿子导致失衡，先左后右旋，转两次。
+- 右左情况：在右子树上插上左儿子导致失衡，先右后左旋，转两次。
+
+![](../static/images/sjjg_57.png)
+
+###### AVL查找元素
+
+查找方式与二叉查找树通用
+- 查找最小结点: 左子树为空，表明已经是最左结点了，该值就是最小值
+- 查找最大结点: 右子树为空，表明已经是最右结点了，该值就是最大值
+- 查找指定结点：如果值小于结点值从左子树开始找，反之从右子树开始找，最终找出相等的值即可
+
+###### AVL删除元素
+
+删除元素有四种情况：
+1. 删除的节点是叶子节点，没有儿子，直接删除后看离它最近的父亲节点是否失衡，做调整操作。
+2. 删除的节点下有两个子树，选择高度更高的子树下的节点来替换被删除的节点，如果左子树更高，选择左子树中最大的节点，也就是左子树最右边的叶子节点，如果右子树更高，选择右子树中最小的节点，也就是右子树最左边的叶子节点。最后，删除这个叶子节点，也就是变成情况1。
+3. 删除的节点只有左子树，可以知道左子树其实就只有一个节点，被删除节点本身（假设左子树多于2个节点，那么高度差就等于2了，不符合AVL树定义），将左节点替换被删除的节点，最后删除这个左节点，变成情况1。
+4. 删除的节点只有右子树，可以知道右子树其实就只有一个节点，被删除节点本身（假设右子树多于2个节点，那么高度差就等于2了，不符合AVL树定义），将右节点替换被删除的节点，最后删除这个右节点，变成情况1。
+
+后面三种情况最后都变成 情况1，就是将删除的节点变成叶子节点，然后可以直接删除该叶子节点，然后看其最近的父亲节点是否失衡，失衡时对树进行平衡。
+
+图示：
+
+![](../static/images/sjjg_58.jpeg)
+
+删除节点 24，导致节点 26 的子树不平衡了，这时需要对该子树进行旋转，旋转后如图：
+
+![](../static/images/sjjg_59.jpeg)
+
+可以发现这时树仍然不平衡，这时是节点 22 的子树不平衡，需要继续旋转，旋转后如图：
+
+![](../static/images/sjjg_60.jpeg)
+
+###### 完整代码示例(php)
+
+```php
+<?php
+ini_set("display_errors", "On");
+error_reporting(E_ALL | E_STRICT);
+
+
+class AvlNode
+{
+    public $data;
+    public $left;
+    public $right;
+    public $height = 1;
+
+    /**
+     * 初始化结点
+     *
+     * AvlNode constructor.
+     * @param $data
+     */
+    public function __construct($data, $height = 1)
+    {
+        $this->data = $data;
+        $this->height = $height;
+    }
+}
+
+class AvlTree
+{
+    public $root;
+
+    /**
+     * 添加结点
+     *
+     * @param $data
+     * @return bool
+     * @throws Exception
+     */
+    public function add($data)
+    {
+        $this->root = $this->_addHandle($this->root, $data);
+        return true;
+    }
+
+    /**
+     * 添加结点 - 具体操作
+     *
+     * @param $node
+     * @param $data
+     * @return mixed|null
+     * @throws Exception
+     */
+    private function _addHandle(&$node, $data)
+    {
+        if (!($node instanceof AvlNode)) {
+            $node = new AvlNode($data, 1);
+        }
+        $newNode = null;
+        if ($data == $node->data) {
+            return $node;
+        }
+
+        if ($data > $node->data) {
+            //右子树插入
+            $node->right = $this->_addHandle($node->right, $data);
+            //计算平衡因子: 插入右子树后，要确保左子树高度不能比右子树低一层
+            $bf = $this->balanceFactor($node);
+            if ($bf == -2) {
+                //失衡
+                if ($data > $node->right->data) {
+                    //右右情况，表示在右子树上插入右儿子导致失衡，使用左旋
+                    $newNode = $this->leftRotation($node);
+                } else {
+                    //右左情况，表示右子树上插入左儿子导致失衡，使用先右后左旋
+                    $newNode = $this->rightLeftRotation($node);
+                }
+            }
+        } else {
+            //左子树插入
+            $node->left = $this->_addHandle($node->left, $data);
+            //平衡因子
+            $bf = $this->balanceFactor($node);
+            if ($bf == 2) {
+                //失衡
+                if ($data < $node->left->data) {
+                    //左左情况，表示在左子树上插入左儿子导致失衡，使用右旋
+                    $newNode = $this->rightRotation($node);
+                } else {
+                    //左右情况，表示左子树上插入右儿子导致失衡，使用先左后右旋
+                    $newNode = $this->leftRightRotation($node);
+                }
+            }
+        }
+
+        if (!($newNode instanceof AvlNode)) {
+            //表示无旋转，根结点没变，直接刷新树高度
+            $this->updateHeight($node);
+            return $node;
+        } else {
+            //旋转了，根结点改变，需要刷新树根结点高度
+            $this->updateHeight($newNode);
+            return $newNode;
+        }
+    }
+
+    /**
+     * 右右情况：在右子树上插上右儿子导致失衡，左旋，转一次
+     */
+    public function leftRotation(&$root)
+    {
+        //root：是失去平衡的树的根结点
+        //pivot: 是旋转后重新平衡的树的根结点，方便下面称呼这里可以称为支点
+        //b: 是支点左子树结点，旋转后将转移到root的右侧
+        //结合wiki图示，此时pivot、B、root发生了变化
+        $pivot = $root->right;
+        $b = $pivot->left;
+        $pivot->left = $root;
+        $root->right = $b;
+
+        //node和pivot发生了高度变化
+        $this->updateHeight($root);
+        $this->updateHeight($pivot);
+        return $pivot;
+    }
+
+    /**
+     * 左左情况：在左子树上插上左儿子导致失衡，右旋，转一次
+     */
+    public function rightRotation(&$root)
+    {
+        //root：是失去平衡的树的根结点
+        //pivot: 是旋转后重新平衡的树的根结点，方便下面称呼这里可以称为支点
+        //b: 是支点右子树结点，旋转后将转移到root的左侧
+        //结合wiki图示，此时pivot、B、root发生了变化
+        $pivot = $root->left;
+        $b = $pivot->right;
+        $pivot->right = $root;
+        $root->left = $b;
+
+        //node和pivot发生了高度变化
+        $this->updateHeight($root);
+        $this->updateHeight($pivot);
+        return $pivot;
+    }
+
+    /**
+     * 左右情况：在左子树上插上右儿子导致失衡，先左后右旋，转两次。
+     */
+    public function leftRightRotation(&$node)
+    {
+        $node->left = $this->leftRotation($node->left);
+        return $this->rightRotation($node);
+    }
+
+    /**
+     * 右左情况：在右子树上插上左儿子导致失衡，先右后左旋，转两次
+     */
+    public function rightLeftRotation(&$node)
+    {
+        $node->right = $this->rightRotation($node->right);
+        return $this->leftRotation($node);
+    }
+
+    /**
+     * 更新结点高度
+     */
+    public function updateHeight(&$node)
+    {
+        if (!($node instanceof AvlNode)) {
+            return;
+        }
+
+        $leftHeight = 0;
+        $rightHeight = 0;
+
+        //左子树高度
+        if ($node->left instanceof AvlNode) {
+            $leftHeight = $node->left->height;
+        }
+
+        //右子树高度
+        if ($node->right instanceof AvlNode) {
+            $rightHeight = $node->right->height;
+        }
+
+        //高度最高的子树+1就是当前结点的高度
+        $maxHeight = max($leftHeight, $rightHeight);
+        $node->height = $maxHeight + 1;
+    }
+
+    /**
+     * 计算平衡因子: 左子树高度 - 有子树高度
+     *
+     */
+    public function balanceFactor($node)
+    {
+        if (!($node instanceof AvlNode)) {
+            throw new \Exception("计算平衡因子err: 非结点");
+        }
+
+        $leftHeight = 0;
+        $rightHeight = 0;
+        if ($node->left instanceof AvlNode) {
+            $leftHeight = $node->left->height;
+        }
+
+        if ($node->right instanceof AvlNode) {
+            $rightHeight = $node->right->height;
+        }
+
+        return $leftHeight - $rightHeight;
+    }
+
+
+    /**
+     * 查找结点
+     *
+     * @param $data
+     * @return mixed|null
+     * @throws Exception
+     */
+    public function find($data)
+    {
+        return $this->_findHandle($this->root, $data);
+    }
+
+    /**
+     * 查找结点 - 具体操作
+     */
+    private function _findHandle($node, $data)
+    {
+        if (!($node instanceof AvlNode)) {
+            throw new \Exception("参数错误：不是结点");
+        }
+
+        if ($data == $node->data) {
+            return $node;
+        } else if ($data > $node->data) {
+            if (!($node->right instanceof AvlNode)) {
+                //右子树为空，表示找不到该值了，返回null
+                return null;
+            }
+            return $this->_findHandle($node->right, $data);
+        } else {
+            if (!($node->left instanceof AvlNode)) {
+                //左子树为空，表示找不到该值了，返回null
+                return null;
+            }
+            return $this->_findHandle($node->left, $data);
+        }
+    }
+
+    /**
+     * 删除结点
+     */
+    public function del($data)
+    {
+        //空树，直接返回
+        if (!($this->root instanceof AvlNode)) {
+            return true;
+        }
+        $this->root = $this->_delHandle($this->root, $data);
+        return true;
+    }
+
+    /**
+     * 删除结点 - 具体操作
+     *
+     * @param $node
+     * @param $data
+     * @return bool|mixed|null
+     * @throws Exception
+     */
+    private function _delHandle(&$node, $data)
+    {
+        if (!($node instanceof AvlNode)) {
+            return true;
+        }
+
+        if ($data < $node->data) {
+            //从左子树开始删除
+            $node->left = $this->_delHandle($node->left, $data);
+            //更新高度
+            $this->updateHeight($node->left);
+        } else if ($data > $node->data) {
+            //从右子树开始删除
+            $node->right = $this->_delHandle($node->right, $data);
+            //更新高度
+            $this->updateHeight($node->right);
+        } else {
+            //找到对应结点，开始删除
+
+            //第一种情况： 该结点没有左右子树，直接删除即可
+            if (!($node->left instanceof AvlNode) && !($node->right instanceof AvlNode)) {
+                return null;
+            }
+
+            if (($node->left instanceof AvlNode) && ($node->right instanceof AvlNode)) {
+                //第二种情况：该结点有两棵子树，选择高度更高的子树下的结点来替换被删除的结点
+                if ($node->left->height > $node->right->height) {
+                    //左子树高，选择左子树中最大的结点来替换
+
+                    //最大结点
+                    $maxNode = ($node->left->right instanceof AvlNode) ? $node->left->right : $node->left;
+                    //最大值的结点替换被删结点
+                    $node->data = $maxNode->data;
+                    //删除最大结点
+                    $this->_delHandle($node->left, $maxNode->data);
+                    //更新该结点高度
+                    $this->updateHeight($node->left);
+                } else {
+                    //右子树更高：选择右子树中最小的结点来替换
+
+                    //最小结点
+                    $minNode =  ($node->right->left instanceof AvlNode) ? $node->right->left : $node->right;
+                    //最小值的结点替换被删结点
+                    $node->data = $minNode->data;
+                    //删除最小结点
+                    $this->_delHandle($node->right, $minNode->data);
+                    //更新该结点高度
+                    $this->updateHeight($node->right);
+                }
+
+            } else {
+                //只有左子树或者右子树； 只有一个子树，该子树也只是一个结点，将该结点替换被删除的结点，然后置子树为空
+                if ($node->left instanceof AvlNode) {
+                    //第三种情况：删除的结点只有左子树，可以知道左子树其实就只有一个结点，被删除结点本身（假设左子树多于2个结点，那么高度差就等于2了，不符合AVL树定义），将左结点替换被删除的结点，最后删除这个左结点，变成情况1。
+                    $node->data = $node->left->data;
+                    $node->left = null;
+                } else {
+                    //第四种情况：删除的结点只有右子树，可以知道右子树其实就只有一个结点，被删除结点本身（假设右子树多于2个结点，那么高度差就等于2了，不符合AVL树定义），将右结点替换被删除的结点，最后删除这个右结点，变成情况1。
+                    $node->data = $node->right->data;
+                    $node->right = null;
+                }
+            }
+
+            //找到值，进行替换删除后返回该结点
+            return $node;
+        }
+
+        //删除后平衡控制
+        $newNode = null;
+        $bf = $this->balanceFactor($node);
+        if ($bf == -2) {
+            //失衡: 删除左子树结点导致右边比左边高了
+            if ($this->balanceFactor($node->right) <= 0) {
+                $newNode = $this->leftRotation($node);
+            } else {
+                $newNode = $this->rightLeftRotation($node);
+            }
+        } else if ($bf == 2) {
+            //失衡：删除右子树结点导致左边比右边高了
+            if ($this->balanceFactor($node->left) >= 0) {
+                $newNode = $this->rightRotation($node);
+            } else {
+                $newNode = $this->leftRightRotation($node);
+            }
+        }
+
+        if (!($newNode instanceof AvlNode)) {
+            //表示无旋转，根结点没变，直接刷新树高度
+            $this->updateHeight($node);
+            return $node;
+        } else {
+            //旋转了，根结点改变，需要刷新树根结点高度
+            $this->updateHeight($newNode);
+            return $newNode;
+        }
+    }
+}
+
+//test: 示例图形见wiki
+try {
+    $AvlTree = new AvlTree();
+    //$data = [3,4,5];
+    //$data = [3,5,6];
+    //$data = [3,2,1,4,5,6,7,10,9,8];
+    $data = [22,8,26,4,18,24,28,2,6,14,20,30,1,3,5,7,12,16];
+    //$data = [22,8,26,4,18,24,28,30];
+    foreach ($data as $v) {
+        $AvlTree->add($v);
+    }
+    echo "结果：" . PHP_EOL;
+    //打印完整二叉平衡树
+    //print_r($AvlTree->root);
+
+    //查找指定结点
+    //print_r($AvlTree->find(7));
+
+    //删除
+    $AvlTree->del(24);
+
+    //再次查看
+    print_r($AvlTree->root);
+    exit;
+}catch (\Exception $e) {
+    var_dump("line: " . $e->getLine());
+    var_dump("message: " . $e->getMessage());
+    var_dump("trace: " . $e->getTraceAsString());
+}
+```
 
 ##### 多路查找树(B树)
 
@@ -2185,10 +2652,8 @@ Node Object
 
 
 
+
 <!-- 
 redis集合的数据结构：跳表
-红黑树
-b-tree
-b+-tree
-top k 问题（堆排序可以求）
+top k 问题（堆排序可以求） 了解
 -->
