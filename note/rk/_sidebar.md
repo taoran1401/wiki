@@ -1,5 +1,5 @@
 * 系统架构设计师
-  * [介绍](note/rk/DESC)
+  <!-- * [介绍](note/rk/DESC) -->
   * [企业信息化](note/rk/EnterpriseInformatization)
   * [软件工程](note/rk/SE)
   * [软件架构设计](note/rk/SA)
@@ -11,9 +11,8 @@
   * [计算机网络](note/rk/ComputerNetwork)
   * [知识产权与标准化](note/rk/IntellectualProperty)
   * [数据库系统](note/rk/DB)
-  * [数学与经济管理-TODO](note/rk/MathEA)
-  * [案例分析-TODO](note/rk/Case)
-  * [论文-TODO](note/rk/thesis)
+  * [补充](note/rk/Supplement)
+  * [论文](note/rk/thesis)
 
 
 

@@ -15,8 +15,8 @@
 
 ## CISC与RISC 
 
-- 复杂指令集计算机(CISCComplex Instruction Set Computers)
-- 精简指令集计算机(RISCReduced Instruction Set Computers)
+- 复杂指令集计算机(CISC, Complex Instruction Set Computers)
+- 精简指令集计算机(RISC, Reduced Instruction Set Computers)
 
 |指令系统类型|指令|寻址方式|实现方式|其它|
 |-|-|-|-|-|

@@ -98,6 +98,13 @@
 - 汇聚层 : 网络访问策略控制、数据包处理、过滤、寻址
 - 核心层 : 高速数据交换，常用几余机制
 
+层次化网络设计应该遵循一些简单的原则，这些原则可以保证设计出来的网络更加具有层次的特性:
+- 在设计时，设计者应该尽量控制层次化的程度，一般情况下，由核心层、汇聚层、接入层三个层次就足够了，过多的层次会导致整体网络性能的下降，并且会提高网络的延迟，但是方便网络故障排查和文档编写。
+- 在接入层应当保持对网络结构的严格控制，接入层的用户总是为了获得更大的外部网络访问带宽，而随意申请其他的渠道访问外部网络是不允许的。
+- 为了保证网络的层次性，不能在设计中随意加入额外连接，额外连接是指打破层次性，在不相邻层次间的连接，这些连接会导致网络中的各种问题，例如缺之汇聚层的访问控制和数据报过滤等
+- 在进行设计时，应当首先设计接入层，根据流量负载、流量和行为的分析，对上层进行更精细的容量规划，再依次完成各上层的设计。
+- 除去接入层的其他层次，应尽量采用模块化方式每个层次由多个模块或者设备集合构成，每个模块间的边界应非常清晰。
+
 ### 网络接入技术
 
 有线接入:
@@ -122,18 +129,18 @@
 
 ### 协议和标准
 
-公用交换电话网络(PSTN，Public Switched Telephone Network)
-数字数据网 (DDN，Data Direct Networks)
-综合业务数字网 (ISDN)
-非对称数字用户线路 (ADSL，Integrated Services Digital Network)
-同轴光纤技术 (HFC，Hybrid Fiber Coaxial)
-无线局域网鉴别和保密基础结构 (WAPI，Wireless LAN Authentication andPrivacy Infrastructure)
-码分多址(CDMA，Code Division Multiple Access)
-宽带码分多址(WCDMA，Wideband Code Division Multiple Access)
-时分同步码分多址 (TD-SCDMA，Time Division-Synchronous Code DivisionMultiple Access)
-长期演进技术(LET，Long Term Evolution)
-时分双工 (TDD，Time-division duplex)
-频分双工 (FDD，Frequency-division duplex)
+- 公用交换电话网络(PSTN，Public Switched Telephone Network)
+- 数字数据网 (DDN，Data Direct Networks)
+- 综合业务数字网 (ISDN)
+- 非对称数字用户线路 (ADSL，Integrated Services Digital Network)
+- 同轴光纤技术 (HFC，Hybrid Fiber Coaxial)
+- 无线局域网鉴别和保密基础结构 (WAPI，Wireless LAN Authentication andPrivacy Infrastructure)
+- 码分多址(CDMA，Code Division Multiple Access)
+- 宽带码分多址(WCDMA，Wideband Code Division Multiple Access)
+- 时分同步码分多址 (TD-SCDMA，Time Division-Synchronous Code DivisionMultiple Access)
+- 长期演进技术(LET，Long Term Evolution)
+- 时分双工 (TDD，Time-division duplex)
+- 频分双工 (FDD，Frequency-division duplex)
 
 
 ![](../../static/images/rk/cn_5.png)
@@ -145,8 +152,18 @@
 ![](../../static/images/rk/cn_6.png)
 
 - 直连式存储(DAS，Direct-Attached Storage)
+  - 存储设备通过电缆(通常是SCSI接口电缆)直接连接服务器
+  - I/O请求直接发送到存储设备
+  - 依赖于服务器，其本身是硬件的堆叠，不带有任何存储操作系统
+  - 不能提供跨平台文件共享功能，各系统平台下文件需分别存储
 - 网络附加存储(NAS，Network-Attached Storage)
+  - 存储系统不再通过I/O总线附属于某个特定的服务器或客户机，而是直接通过网络接口与网络直接相连，由用户通过网络来访问
+  - NAS设备有自己的OS
+  - 大大降低了存储设备的成本
+  - 存储信息都是采用RAID方式进行管理，从而有效的保护了数据
 - 存储区域网络(SAN，Storage Area Network)
+  - 通过专用高速网将一个或多个网络存储设备和服务器连接起来的专用存储系统
+  - 主要采取数据块的方式进行数据和信息的存储，目前主要使用于以太网和光纤通道两类环境中
 - Internet小型计算机系统接口 (isCsl，Internet Small Computer System Interface)
 
 ### Raid
@@ -170,9 +187,13 @@
 
 #### Raid5
 
+是一种把多块硬盘组合成一个逻辑磁盘的技术，它可以提供冗余，提高可靠性，并允许在磁盘故障时仍然可以正常工作
+
 ![](../../static/images/rk/cn_8.png)
 
 RAID5磁盘利用率 (n-1) /n，具备容错功能
+
+RAID5容量计算方式是：单块磁盘容量*(磁盘个数-1)
 
 ## IPv6
 
@@ -191,19 +212,18 @@ IPv6是设计用于替代现行版本IP协议 (IPv4) 的下一代IP协议
 - 组播地址(Multicast): IPv6中的组播在功能上与IPv4中的组播类似
  
 
-IPv6地址由8个16进制字段构成。例如:
-20010d68:85a3:0000:1319:8a2e0370:7344
+IPv6地址由8个16进制字段构成。例如:20010d68:85a3:0000:1319:8a2e0370:7344
 
-IPV6地址的省写，上面的IP地址等价于:
-20010d68:85a3:1319:8a2e:0370:7344
+
+IPV6地址的省写，上面的IP地址等价于:20010d68:85a3:1319:8a2e:0370:7344
 
 遵守这些规则，如果因为省略而出现了两个以上的冒号，则可以压缩为一个,但这种零压缩在地址中只能出现一次。因此:
 
-2001:0DB8:0000:0000:0000:0000:1428:57ab
+- 2001:0DB8:0000:0000:0000:0000:1428:57ab
 
-2001:0DB8:0:0:0:0:1428:57ab
+- 2001:0DB8:0:0:0:0:1428:57ab
 
-2001:0DB8:1428:57ab
+- 2001:0DB8:1428:57ab
 
 以上都是合法的地址，并且它们是等价的。同时前导的零可以省略，因此: `2001:0DB8:02de::0e13`等价于`2001:DB8:2de::e13`
 

@@ -267,29 +267,88 @@ xss,doss,webshell,sql注入攻击防御
 ```
 
 
-
 ```
-0-4 = 5kb
+dao: 
+start dao: 
+contribute: 
+scene{ 
+	1,2,3: 
+	4,5,6: 
+	7,8,9: 
+}
 
+node{
+	1-5 start
 
-target: 20y(26week)(3400 coupon)
-now: 170 coupon
+}
 
-2week/y:
-	ban: 3*10*200(0.6y)
-	other: 0.4y
-	costTime: 1h/day
+red pack{
+	1: 20 start dao;
+	2: 100 start dao;
+	3: 500 start dao;
+}
 
-week/y
-	ban: 7*6*200(0.84y)
-	other: 0.2y
-	costTime: 2.2h/day
+collect{
+	4 combo 1
+}
 
-仙林虚空/灵台仙境
+altar{
+
+}
+
+cj{
+	
+}
+
+词汇：
+时间相关，动物，建筑，水果，颜色，日常用品
 ```
 
 
 
+
+-- ocr{
+	方案一：
+		转换成web
+		音视频ocr识别使用链接的方式
+		添加历史识别记录
+		授权后免费使用，每天赠送积分
+	方案二：
+		转换成浏览器插件
+		支持图片和视频识别(bili, youtube)
+		支持实时转录
+}
+-- chatgpt next my control{
+	run env: web
+	训练相关模型
+}
+-- ai image
+-- ai{
+	chatgpt(各种模型)
+	ai image;(logo, avatar)
+}
+-- 答题、问卷、测试系统(待定)
+-- 组件{
+	google一键授权登录(海外)
+	phone(国内)
+	多语言：中文，英语
+	[翻译api组件]
+}
+
+chargpt-next-web
+
+server: php, golang
+web: vue3, ts
+multi platfrom: uniapp
+
+
+
+mysql order by field的使用; 通过字段值自定义排序
+
+
+{
+	75 * 4: 300	
+}
 
 
 
