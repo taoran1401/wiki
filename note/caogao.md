@@ -5,6 +5,8 @@ php 内存管理和垃圾回收机制
   https://www.jb51.net/article/213549.htm
 vuex
 内存逃逸
+堆,散列表,RBTree 
+跳表(redis使用)
 ```
 
 ```
@@ -344,9 +346,13 @@ multi platfrom: uniapp
 mysql order by field的使用; 通过字段值自定义排序
 
 
+vue3{
+	? nextTick
+}
 
 
 
 
 
+https://www.ip.cn/api/index?ip&type=0
 

@@ -392,3 +392,90 @@ flex 是 Flexible Box 的缩写，就是弹性盒子布局的意思
     <div style="align-self: flex-end; width: 100px; height: 100px; line-height: 100px;vertical-align: middle;margin: 5px;background-color: #3075b9;font-size: 24px;color: white;text-align: center;">flex-end</div>
     <div style="width: 100px; height: 100px; line-height: 100px;vertical-align: middle;margin: 5px;background-color: #3075b9;font-size: 50px;color: white;text-align: center;">3</div>
 </div>
+
+## css变量
+
+### 声明变量
+
+- `--`声明变量,如：`--header`
+- 变量名区分大小写；`--header`和`--Header`是两个变量
+
+`:root`是一个伪类选择器，用于选择HTML文档的根元素。在每个HTML文档中，只有一个根元素，通常是标签;
+
+用`:root`选择器来定义一个CSS变量（--foo）并将其设置为red。这个变量可以在整个文档中使用。
+
+```css
+:root{
+  --foo:red
+}
+```
+
+### 使用变量
+
+使用变量用`var(变量名, 默认值)`函数
+
+```vue
+<template>
+  <div class="content">content</div>
+</template>
+
+<style>
+:root{
+  --foo-red:red
+}
+.content{
+  /* 当没有变量时，使用第二个参数作为默认值 */
+  color: var(--foo-red, blue);
+}
+</style>
+```
+
+### 全局变量和局部变量
+
+- 全局变量
+- 局部变量:定义某元素下的变量。只能在某元素身上，以及这个元素的内部的所有的标签去使用
+
+示例：
+```vue
+<template>
+  <div class="content">
+    content
+    <div>date</div>
+  </div>
+  <div class="floor">floor</div>
+</template>
+
+<style>
+:root{
+  /* 全局变量：在这里定义的css变量，叫做全局css变量。在任何选择器中，都可以去使用。 */
+  --foo-red:red
+}
+.content{
+  /* 使用全局变量 */
+  color: var(--foo-red);
+  /* 局部变量：只能在某元素身上，以及这个元素的内部的所有的标签去使用 */
+  --content-color: blue;
+}
+.content div{
+  /* 使用局部变量 */
+  color: var(--content-color)；
+}
+</style>
+```
+<!-- 
+### calc()
+
+`calc()`函数用于动态计算长度值
+- 需要注意的是，运算符前后都需要保留一个空格，例如：width: calc(100% - 10px)；
+- 任何长度值都可以使用calc()函数进行计算；
+- calc()函数支持 "+", "-", "*", "/" 运算；
+- calc()函数使用标准的数学运算优先级规则；
+
+display:flex属性 justify-content: space-between和flex-flow:wrap一起使用的问题
+https://blog.csdn.net/qq_38032300/article/details/89151490
+
+
+after: 的使用
+ -->
+
+

@@ -11,6 +11,8 @@
   * [数据结构和算法](note/DataStructureAndAlgorithms.md)
 
 * 前端
+  * [vue3](note/vue3.md)
+  <!-- * [typescript](note/typescript.md) -->
   * [html/css](note/HtmlCss.md)
   <!-- * [NuxtJs](note/NuxtJs.md) -->
   * [VueElementAdmin](note/VueElementAdmin.md)
