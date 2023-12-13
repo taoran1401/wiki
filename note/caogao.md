@@ -348,11 +348,15 @@ mysql order by field的使用; 通过字段值自定义排序
 
 vue3{
 	? nextTick
+	跨域处理{
+		单后端,
+		多后端
+	}
 }
 
+mock/服务端 -> api映射操作和请求 -> pinia中操作映射去请求后端和存储数据 -> 页面调用pinia和使用pinia中的数据
 
 
 
 
-https://www.ip.cn/api/index?ip&type=0
 

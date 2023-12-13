@@ -458,10 +458,229 @@ flex 是 Flexible Box 的缩写，就是弹性盒子布局的意思
 }
 .content div{
   /* 使用局部变量 */
-  color: var(--content-color)；
+  color: var(--content-color);
 }
 </style>
 ```
+
+## 动画
+
+### 定义动画
+```css
+@keyframes 动画名称 {
+    from {
+        background-color: red;
+    }
+    to {
+        background-color: blue;
+    }
+}
+```
+
+- `@keyframes`: 关键帧，通过在动画序列中定义关键帧的样式来控制 `CSS` 动画序列中的中间步骤。和转换`transition`相比，关键帧`keyframes`可以控制动画序列的中间步骤。
+- from: 动画的开始， 等同于`0%`
+- to: 动画的结束，等同于`100%`
+
+> 可以任意个变化： 通过`%`添加变话点， 如`25%`时的变化，`50%`时的变化
+
+### 定义动画时长
+```css
+div{
+    animation: 动画名称 5s;
+}
+```
+
+上面示例：将动画绑定到`div`选择器，时长为5秒
+
+
+### 动画属性
+
+|属性|描述|
+|-|-|
+|@keyframes|规定动画。|
+|animation|所有动画属性的简写属性。|
+|animation-name|规定 @keyframes 动画的名称。|
+|animation-duration|规定动画完成一个周期所花费的秒或毫秒。默认是 0。|
+|animation-timing-function|规定动画的速度曲线。默认是 "ease"。|
+|animation-fill-mode|规定当动画不播放时（当动画完成时，或当动画有一个延迟未开始播放时），要应用到元素的样式。|
+|animation-delay|规定动画何时开始。默认是 0。|
+|animation-iteration-count|规定动画被播放的次数。默认是 1。|
+|animation-direction|规定动画是否在下一周期逆向地播放。默认是 "normal"。|
+|animation-play-state|规定动画是否正在运行或暂停。默认是 "running"。|
+
+### 案例：果冻按钮
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html body{
+      padding: 0;
+      margin: 0;
+    }
+    /* 定义动画 */
+    @keyframes jelly {
+      0%, 100% {
+        transform: scale(1, 1)
+      }
+      25% {
+        transform: scale(0.9, 1.1)
+      }
+      50% {
+        transform: scale(1.1, 0.9)
+      }
+      75% {
+        transform: scale(0.95 1.05)
+      }
+    }
+    button{
+      animation: ani 5s;
+      border: none;
+      padding: 0.5rem 1rem;
+      color: #fff;
+      background-color: black;
+    }
+    button:hover{
+      cursor: pointer;
+      /* 动画 */
+      animation: jelly 0.5s;
+    }
+  </style>
+</head>
+<body>
+  <div style="width: 100px;height: 100px;text-align: center;line-height: 100px;background-color: rgb(192, 192, 192);">
+    <!-- 按钮 -->
+    <button>Jelly</button>
+  </div>
+</body>
+</html>
+
+
+代码：
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html body{
+      padding: 0;
+      margin: 0;
+    }
+    /* 定义动画 */
+    @keyframes jelly {
+      0%, 100% {
+        transform: scale(1, 1)
+      }
+      25% {
+        transform: scale(0.9, 1.1)
+      }
+      50% {
+        transform: scale(1.1, 0.9)
+      }
+      75% {
+        transform: scale(0.95 1.05)
+      }
+    }
+    button{
+      animation: ani 5s;
+      border: none;
+      padding: 0.5rem 1rem;
+      color: #fff;
+      background-color: black;
+    }
+    button:hover{
+      cursor: pointer;
+      /* 动画 */
+      animation: jelly 0.5s;
+    }
+  </style>
+</head>
+<body>
+  <div style="width: 100px;height: 100px;text-align: center;line-height: 100px;background-color: rgb(192, 192, 192);">
+    <!-- 按钮 -->
+    <button>Jelly</button>
+  </div>
+</body>
+</html>
+```
+
+### 案例：翻转飞机
+
+<div class="box">
+  <div class="plane"></div>
+</div>
+<style>
+html,body {
+  padding: 0;
+  margin: 0;
+}
+.box {
+  background-color: rgb(192, 192, 192);
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.plane {
+  width: 2em;
+  height: 2em;
+  background-color: #fc2f70;
+  transform: rotate(0);
+  animation: flip 1s infinite;
+}
+@keyframes flip {
+  50% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(180deg) rotateX(180deg);
+  }
+}
+</style>
+
+代码：
+```html
+<div class="box">
+  <div class="plane"></div>
+</div>
+<style>
+html,body {
+  padding: 0;
+  margin: 0;
+}
+.box {
+  background-color: rgb(192, 192, 192);
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.plane {
+  width: 2em;
+  height: 2em;
+  background-color: #fc2f70;
+  transform: rotate(0);
+  animation: flip 1s infinite;
+}
+@keyframes flip {
+  50% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(180deg) rotateX(180deg);
+  }
+}
+</style>
+```
+
+
 <!-- 
 ### calc()
 

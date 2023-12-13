@@ -14,7 +14,8 @@
   
   * [vue3](note/vue3.md)
   <!-- * [typescript](note/typescript.md) -->
-  * [html/css](note/HtmlCss.md)
+  * [html](note/Html.md)
+  * [css](note/Css.md)
   * [VueElementAdmin](note/VueElementAdmin.md)
 
 * 中间件
