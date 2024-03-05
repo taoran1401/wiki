@@ -11,7 +11,7 @@
   * [数据结构和算法](note/DataStructureAndAlgorithms.md)
 
 * 前端
-  
+  * [基础](note/WebBase.md)
   * [vue3](note/vue3.md)
   <!-- * [typescript](note/typescript.md) -->
   * [html](note/Html.md)

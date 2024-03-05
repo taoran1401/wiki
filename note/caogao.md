@@ -320,6 +320,7 @@ cj{
 		支持图片和视频识别(bili, youtube)
 		支持实时转录
 }
+
 -- chatgpt next my control{
 	run env: web
 	训练相关模型
@@ -346,17 +347,35 @@ multi platfrom: uniapp
 mysql order by field的使用; 通过字段值自定义排序
 
 
+
 vue3{
 	? nextTick
-	跨域处理{
-		单后端,
-		多后端
-	}
 }
+
 
 mock/服务端 -> api映射操作和请求 -> pinia中操作映射去请求后端和存储数据 -> 页面调用pinia和使用pinia中的数据
 
 
+jian> 60sq 20gs | 
+yao> 7jg 45gs | 5jg 6jg 
+xie> 30jg | 17jg
+er> 18jg | 21jg
+lian> 20sq 25cd 15su | 3jg 1.4gq 15su 20sq
+
+eng: ~9月
+sum： 4500词
+calc: 189day ~20word/day
 
 
+
+
+
+- 13jg 25cd 
+
+
+
+
+- 1: 21-9 work 
+- 2: 9 - 21 sleep
+- 3: 21-9-21 
 
